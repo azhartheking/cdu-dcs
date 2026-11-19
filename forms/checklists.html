@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU Unit 11 — Start-up and Shutdown Checklists</title>
+<link rel="stylesheet" href="forms.css">
+<style>@page{size:A4 portrait;margin:0} table.t td.v{color:#33373b;font-size:8pt} table.t td.act{width:56mm}</style>
+</head>
+<body class="portrait" data-doc="CDU-OPS-CL-001" data-rev="1.0" data-unit="Unit 11 · Crude distillation (training unit)">
+<div class="noprint">Print with <b>Ctrl+P → Save as PDF</b>, A4 portrait, margins <b>None</b>, "Background graphics" ON. Or use the ready PDF in the Documents folder.</div>
+
+<div class="sheet" data-t="Start-up and Shutdown Checklists" data-s="Document control and instructions for use">
+<h1 style="margin-top:4mm">Start-up and Shutdown Checklists</h1>
+<p style="font-size:11pt">Crude Distillation Unit 11 — preheat & desalting, H-1101, T-1101 with side strippers, overhead, stabilizer T-1107<br><span class="mut">Operating checklists for the DCS training simulator · use with the Student Manual edition 1.0 (§8 start-up, §9 shutdown)</span></p>
+<h2>Contents</h2>
+<table class="t">
+<tr><th>Part</th><th style="text-align:left">Checklist</th><th>Form</th><th>Page</th></tr>
+<tr><td class="c">1</td><td>Pre-start-up safety review (PSSR)</td><td class="c">CDU-CL-01</td><td class="c">2</td></tr>
+<tr><td class="c">2</td><td>Start-up from cold — phases A to C (charge, circulation, heater light-off, heat-up)</td><td class="c">CDU-CL-02</td><td class="c">3</td></tr>
+<tr><td class="c">3</td><td>Start-up from cold — phases D to F (crude in, desalters, side draws, stabilizer, rate)</td><td class="c">CDU-CL-02</td><td class="c">4</td></tr>
+<tr><td class="c">4</td><td>Controlled unit shutdown</td><td class="c">CDU-CL-03</td><td class="c">5</td></tr>
+<tr><td class="c">5</td><td>Emergency shutdown UX-007, heater restart after a trip</td><td class="c">CDU-CL-04</td><td class="c">6</td></tr>
+<tr><td class="c">6</td><td>Setpoint reference card, deviation record and final sign-off</td><td class="c">CDU-CL-05</td><td class="c">7</td></tr>
+</table>
+<h2>Document control</h2>
+<table class="t">
+<tr><th style="width:25%">Item</th><th style="text-align:left">Detail</th></tr>
+<tr><td>Document number</td><td>CDU-OPS-CL-001</td></tr>
+<tr><td>Revision</td><td>1.0 — matches simulator 1.0.0 and Student Manual edition 1.0 (November 2026)</td></tr>
+<tr><td>Applies to</td><td>Areas 100 (preheat & desalting), 200 (H-1101), 300 (T-1101 + strippers), 400 (overhead & T-1107), 500 (rundown & dryers), 900 (utilities & flare)</td></tr>
+<tr><td>Cases covered</td><td>BACH HO (design) · DUBAI · BLEND (Jet A-1) · MAX NAPHTHA · MAX KERO</td></tr>
+</table>
+<table class="t" style="margin-top:2mm">
+<tr><th style="width:18%">Role</th><th>Name</th><th>Signature</th><th style="width:20%">Date</th></tr>
+<tr><td>Prepared by</td><td style="height:8mm"></td><td></td><td></td></tr>
+<tr><td>Reviewed by</td><td style="height:8mm"></td><td></td><td></td></tr>
+<tr><td>Approved by</td><td style="height:8mm"></td><td></td><td></td></tr>
+</table>
+<h2>How to use these checklists</h2>
+<ol style="margin:1mm 0 1mm 5mm;padding-left:3mm">
+<li>Use a <b>new printed copy</b> for every start-up or shutdown. Fill in the header fields before you begin.</li>
+<li>Do the steps <b>in order</b>. After each step check the <i>Verify</i> column on the DCS, write the actual reading, tick ☑ and write the time and your initials.</li>
+<li>If a verification fails, <b>stop</b>. Return the unit to a safe state, record it in the deviation record (page 7) and inform the shift supervisor.</li>
+<li>At a <span class="hpbadge">HOLD POINT</span> the shift supervisor checks the unit condition and signs before anyone continues.</li>
+<li>Any step you skip or change must be recorded in the deviation record, with the reason and approval.</li>
+</ol>
+<div class="legend" style="margin-top:2mm">
+<span><span class="field dcs">DCS</span></span><span>Action by the panel operator in the control room (done in the simulator)</span>
+<span><span class="field f">FIELD</span></span><span>Action or check by the field operator. Essential in a real plant; <b>not simulated</b> in the training simulator — discuss them with the trainer and tick them as "talked through".</span>
+<span><span class="hpbadge">HP</span></span><span>Hold point. Supervisor signature required before continuing.</span>
+<span class="chk">☐</span><span>Tick when the step is done <b>and</b> verified.</span>
+</div>
+<div class="box warn small" style="margin-top:3mm"><b>Training document.</b> Setpoints, limits and procedures are those of the training model. They are not design data and must never be used to operate a real unit.</div>
+</div>
+
+<div class="sheet" data-t="CDU-CL-01 Pre-start-up Safety Review" data-s="Complete before the start-up begins" data-rows="pssr"></div>
+<div class="sheet" data-t="CDU-CL-02 Start-up from Cold (1/2)" data-s="Phases A–C: charge, circulation, heater light-off, heat-up" data-rows="su1"></div>
+<div class="sheet" data-t="CDU-CL-02 Start-up from Cold (2/2)" data-s="Phases D–F: crude in, desalters, side draws, stabilizer, rate" data-rows="su2"></div>
+<div class="sheet" data-t="CDU-CL-03 Controlled Unit Shutdown" data-s="From steady state to empty, stopped, pressurised" data-rows="sd"></div>
+<div class="sheet" data-t="CDU-CL-04 Emergency Shutdown and Heater Restart" data-s="UX-007 actions · relighting H-1101 after a trip" data-rows="em"></div>
+
+<div class="sheet" data-t="CDU-CL-05 Setpoint Card, Deviations, Sign-off" data-s="Recipe SPs per case (training model)">
+<h2>Setpoint reference card — recipe SPs (at 810 t/h)</h2>
+<div id="card"></div>
+<h2>Deviation record</h2>
+<table class="t"><tr><th style="width:8%">Step</th><th>Deviation / skipped step / failure observed</th><th style="width:22%">Action taken</th><th style="width:16%">Approved by</th><th style="width:10%">Time</th></tr>
+<tr><td style="height:9mm"></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:9mm"></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:9mm"></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:9mm"></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:9mm"></td><td></td><td></td><td></td><td></td></tr></table>
+<h2>Final sign-off</h2>
+<div class="fields c3">
+<div>Procedure <span class="chk">☐</span>Start-up <span class="chk">☐</span>Shutdown</div><div>Completed at <span class="fill"></span></div><div>Total time <span class="fill"></span></div>
+<div>Off-spec to product (t) <span class="fill"></span></div><div>Slops (t) <span class="fill"></span></div><div>SIS events <span class="fill"></span></div>
+<div>Case <span class="fill"></span></div><div>Sim score <span class="chk">☐</span>EASY <span class="chk">☐</span>HARD</div><div>PSV lifts <span class="fill"></span></div>
+</div>
+<div class="sig"><div><b>Panel operator</b>Name / signature</div><div><b>Shift supervisor</b>Name / signature</div><div><b>Trainer / assessor</b>Name / signature / result</div></div>
+</div>
+
+<script src="../assets/model.js"></script>
+<script>
+const D = 'DCS', FL = 'FIELD', A = 'ALL';
+const R = {
+  pssr: [['sec', 'A. Permits, isolations and equipment'],
+    [FL, 'All work permits closed; blinds removed per the blind list; equipment boxed up', 'blind list signed'],
+    [FL, 'PSVs in place, isolation valves car-sealed open (PSV-005/172, PSV-161…166, PSV-237/238, PSV-085/086)', 'PSV register checked'],
+    [FL, 'Unit purged and inerted: desalters water-filled, other sections steam-purged and under N2', 'O2 < 1 % at sample points'],
+    [FL, 'Heater H-1101: firebox clear, burners and pilots fitted, peep doors closed, dampers free', 'heater inspection sheet'],
+    [FL, 'Fire and gas detection, deluge, snuffing steam and safety showers in service', 'F&G panel healthy'],
+    ['sec', 'B. Utilities available'],
+    [FL, 'Cooling water, LP / MP / HP steam, fuel gas, N2, instrument air and power available', 'Utilities page: headers normal'],
+    [D, 'Flare header purged; KO drum D-901 level low; flare pilot lit', 'Utilities page: flare pilot only'],
+    ['sec', 'C. Line-up'],
+    [D, 'All controllers in MAN at 0 %, all motors stopped, unit at ambient', 'Overview: no flows'],
+    [D, 'HS-001 desalters BYPASSED; HS-003 charge source SR FLUSHING OIL; all products routed to SLOPS', 'Preheat / Rundown pages'],
+    [FL, 'Flushing-oil tank lined up to P-6001; slops and crude tankage ready to receive', 'tank dips recorded'],
+    [FL, 'Chemical drums (demulsifier, neutralizer, corrosion inhibitor) filled; injection pumps lined up', 'drum levels'],
+    ['sec', 'D. People and communication'],
+    [A, 'Start-up team briefed (this checklist, hold points, emergency actions on page 6)', 'briefing record'],
+    [FL, 'Radios tested; field operators stationed at heater and desalters; PPE per area', '—'],
+    [A, 'RFCC, NHT, KTU, LCO HDT, tank farm and laboratory informed of start-up time and case', 'notified']],
+  su1: [['ph', 'PHASE A — Charge flushing oil and circulate (tracker steps 1–3)'],
+    [D, 'Line-up: desalters BYPASSED (HS-001), routes SLOPS, HS-003 FLUSH', 'tracker step 1 ticked'],
+    [D, 'Start P-6001; PIC-011 AUTO SP 12.0', 'desalter line 12 kg/cm²g'],
+    [D, 'Start P-1101; FIC-069 AUTO 400 t/h; LIC-007 stays MAN 0 %', 'T-1101 bottoms level rising'],
+    [D, 'At ≥ 55 % level: start P-1106; HS-100 SHORT; stop P-1101, then P-6001', 'FIC-069 ≈ 400 t/h on P-1106'],
+    [FL, 'Drain water from low-point drains while circulating (book: allow the unit to stand)', 'no water at drains'],
+    ['ph', 'PHASE B — Heater light-off (steps 4–5)'],
+    [D, 'SL-1101 steam to the superheater coil ON', 'TI superheated steam reading'],
+    [D, 'Start FD fan B-1101; AIC-063 MAN 40 %; purge 5 min with all fuel closed', 'purge timer 300 s'],
+    [FL, 'Check firebox before light-off; pilot gas pressure normal', 'pilot gas ≈ 1 kg/cm²g'],
+    [D, 'PILOTS LIGHT; TIC-066 MAN OP 8 %; BURNERS LIGHT; AIC-063 AUTO 3.0 %', 'flames on graphic, O2 ≈ 3 %'],
+    [D, 'TIC-066 AUTO; raise SP ≤ 50 °C/h to 100–110 °C', 'COT ≥ 100 °C'],
+    ['hp', 'HOLD POINT 1 — heater lit and stable: pass flows equal, COT on SP, O2 2.5–3.5 %, no P1 alarms'],
+    ['ph', 'PHASE C — Long path and heat-up (steps 6–8)'],
+    [D, 'HS-100 LONG until the preheat train reaches ≈ 90–100 °C; then HS-100 SHORT', 'Preheat-train indicator'],
+    [D, 'Ramp TIC-066 to 250–270 °C (never above 270 °C before crude)', 'COT 250–270 °C'],
+    [D, 'Start P-1122, TIC-111 AUTO 85; start P-1102 + E-1112, P-1103, P-1104, P-1105; UIC loops MAN ≈ 20 %', 'pumparound flows'],
+    [D, 'Start E-1111 fans; PIC-064 AUTO 1.3 (fuel-gas padding); LIC-038 / LIC-040 AUTO 50; TIC-076 AUTO', 'D-1103 1.3 kg/cm²g'],
+    ['hp', 'HOLD POINT 2 — ready for crude: COT 250–270 °C, PAs running, E-1111 on, PIC-064 AUTO, desalter line pressurised']],
+  su2: [['ph', 'PHASE D — Crude in and desalting (steps 9–11)'],
+    [D, 'HS-003 CRUDE; start P-6001 (PIC-011 AUTO 12); start P-1101; HS-100 NORMAL', 'charge from tankage'],
+    [D, 'FIC-069 400–500 t/h; LIC-007 AUTO 50 (residue to slops); TDIC-007 / TDIC-015 AUTO 0 °C', 'bottoms level steady'],
+    [D, 'D-1103 level ≥ 20 %: start P-1110 (stabilizer feed)', 'LIC-038 in control'],
+    [D, 'PDIC-503 / 506 MAN 50 %, then AUTO 1.2; HS-001 IN SERVICE; transformers ON', 'grids energised'],
+    [D, 'P-1119 + FIC-004 (≈ 4 % of charge); P-1118; LIC-003 / LIC-006 AUTO 50; demulsifier and neutralizer ON', 'salt < 2 ppm'],
+    ['ph', 'PHASE E — Operating temperature and side draws (steps 12–13)'],
+    [D, 'Ramp TIC-066 to the recipe COT (card, page 7)', 'COT ± 4 °C of recipe'],
+    [D, 'When T-1101 bottom > 300 °C: FIC-051 / 052 / 053 AUTO at the scaled steam rates', 'no WET alarm'],
+    [D, 'Start P-1107, P-1112, P-1113, ejectors A-1102; LIC-011/013/016/019/022 AUTO 50; PIC-049 AUTO −0.90', 'dryer vacuum −0.9'],
+    [D, 'FQIC-033 / 020 / 024 AUTO at recipe × (charge / 810); UIC-029/032/031/033 AUTO scaled', 'stripper levels 50 %'],
+    ['ph', 'PHASE F — Stabilizer, on-spec, rate (steps 14–16)'],
+    [D, 'TIC-060 AUTO 188; PIC-068 AUTO 7.6; LIC-042 AUTO 40', 'T-1107 bottom heating'],
+    [D, 'D-1104 ≥ 8 %: start P-1114 (LIC-047 AUTO 50) and P-1115 (FQIC-037 AUTO)', 'reflux flowing'],
+    ['hp', 'HOLD POINT 3 — lab: all products on spec for the target case before routing to product'],
+    [D, 'Route naphtha, kero, LGO, HGO and residue to PRODUCT', 'all routes PRODUCT'],
+    [D, 'Ramp FIC-069 in ≈ 100 t/h steps to 810 t/h; scale draws, PAs, steam, LPG and wash water', 'products stay on spec'],
+    [A, 'Inform downstream units and laboratory: unit at rate', 'tracker COMPLETE']],
+  sd: [['ph', 'Controlled shutdown (tracker steps 1–12)'],
+    [A, 'Inform downstream units, tank farm and laboratory of the shutdown time', 'notified'],
+    [D, 'Reduce FIC-069 to ≤ 500 t/h; scale draws, PAs and steam', 'charge ≤ 500 t/h'],
+    [D, 'Reduce TIC-066 to ≤ 300 °C', 'COT ≤ 300 °C'],
+    [D, 'Route all products to SLOPS', 'all routes SLOPS'],
+    [D, 'Burners OFF, pilots OFF (H-1101 out)', 'no flames'],
+    [D, 'FIC-051 / 052 / 053 MAN 0 %; ejector steam OFF', 'steam < 0.3 t/h'],
+    [D, 'Stop P-1119, P-1118, transformers; demulsifier and neutralizer OFF', 'desalter services off'],
+    [D, 'TIC-060 MAN 0 % (HP steam to E-1121 closed)', 'HP steam 0'],
+    ['hp', 'HOLD POINT — heater out, steam off, products to slops; D-1103 held ≥ 1.0 kg/cm²g with fuel gas (PIC-064 AUTO)'],
+    [D, 'Stop P-1101 first, then P-6001 (charge cut)', 'charge 0, no UX-001'],
+    [D, 'Stop P-1102…P-1105 and the stabilizer reflux P-1114', 'pumparounds stopped'],
+    [D, 'LIC-007 / LIC-038 / LIC-042 MAN 100 % to pump out to slops; stop P-1106 and P-1110 at ≈ 8 %', 'levels < 10 %, no UX-020/022'],
+    [D, 'Stop all remaining pumps, FD fan and air coolers', 'tracker COMPLETE'],
+    [FL, 'Isolate flushing oil to instruments once heat is off; steam out preheat train and heater tubes if maintenance is planned', 'per maintenance plan']],
+  em: [['ph', 'UX-007 CDU emergency shutdown'],
+    [D, 'Push UX-007 (Overview) — or confirm it has acted after an automatic trip', 'alert pop-up'],
+    [D, 'Confirm: P-6001 and P-1101 stopped, heater fuel isolated, stripping steam closed, transformers off', 'Overview SIS panel'],
+    [D, 'Hold D-1103 and D-1104 pressures (PIC-064 / PIC-068 AUTO); watch PSV-161 / 237', 'no PSV lift'],
+    [D, 'Protect levels: stop draws if strippers run dry; stop P-1106 before UX-020', 'levels > 8 %'],
+    [D, 'Route all products to SLOPS', 'routes SLOPS'],
+    [FL, 'Field check of heater, pumps and leaks; report to the panel', 'report'],
+    ['hp', 'HOLD POINT — cause found and removed; supervisor agrees to restart'],
+    ['ph', 'Heater restart after a trip (UX-005A/B/E)'],
+    [D, 'Remove the cause (fuel-gas header, pass flow, FD fans, COT HH)', 'cause cleared'],
+    [D, 'Reduce charge to 500 t/h; draws scaled; products to slops', 'charge stable'],
+    [D, 'RESET UHSR-005 on the TIC-066 faceplate', 'HTRIP alarm clears'],
+    [D, 'B-1101 running, AIC-063 MAN 40 %; purge 5 min', 'purge timer 300 s'],
+    [D, 'PILOTS LIGHT; TIC-066 MAN 8 %; BURNERS LIGHT; AIC-063 AUTO 3 %', 'flames on graphic'],
+    [D, 'TIC-066 AUTO, ramp COT to the recipe; restore charge; products back to PRODUCT when on spec', 'products on spec']]
+};
+document.querySelectorAll('.sheet[data-rows]').forEach(s => {
+  const rows = R[s.dataset.rows]; let n = 0;
+  let html = '<div class="fields c4" style="margin:0 0 2mm"><div>Date <span class="fill"></span></div><div>Shift <span class="fill"></span></div><div>Case <span class="fill"></span></div><div>Operator <span class="fill"></span></div></div>';
+  html += '<table class="t"><tr><th style="width:7mm">#</th><th class="act">Action</th><th style="width:13mm">By</th><th>Verify on DCS / in field</th><th style="width:17mm">Actual</th><th style="width:7mm">☑</th><th style="width:12mm">Time</th><th style="width:10mm">Init.</th></tr>';
+  for (const r of rows) {
+    if (r[0] === 'ph') html += '<tr class="ph"><td colspan="8">' + r[1] + '</td></tr>';
+    else if (r[0] === 'sec') html += '<tr class="sec"><td colspan="8">' + r[1] + '</td></tr>';
+    else if (r[0] === 'hp') html += '<tr class="hp"><td class="n hpl">HP</td><td colspan="7"><span class="hpbadge">HOLD POINT</span> <b>' + r[1].replace(/^HOLD POINT[^—]*— /, '') + '</b><br>Supervisor ____________________ &nbsp; Time ______</td></tr>';
+    else { n++; html += '<tr><td class="n">' + n + '</td><td>' + r[1] + '</td><td class="c"><span class="field ' + (r[0] === D ? 'dcs' : r[0] === FL ? 'f' : '') + '">' + r[0] + '</span></td><td class="v">' + r[2] + '</td><td></td><td class="box"></td><td></td><td></td></tr>'; }
+  }
+  s.innerHTML = html + '</table>';
+});
+// setpoint card from the recipe solver
+(function () {
+  const g = Object.keys(CDU.GRADES), it = CDU.recipeItems('BACH HO');
+  let h = '<table class="t"><tr><th style="text-align:left">Setpoint</th>' + g.map(k => '<th>' + k + '</th>').join('') + '<th>Unit</th></tr>';
+  it.forEach(([lab, , , u], i) => { h += '<tr><td>' + lab + '</td>' + g.map(k => { const v = CDU.recipeItems(k)[i][2]; return '<td class="c">' + (+v).toFixed(Math.abs(v) < 10 ? 2 : 1) + '</td>'; }).join('') + '<td class="c">' + u + '</td></tr>'; });
+  h += '<tr class="sec"><td colspan="' + (g.length + 2) + '">Common: PIC-011 12.0 · PDIC-503/506 1.2 · LIC-003/006 50 · AIC-063 3.0 · UIC-029 9 · UIC-032 31 · UIC-031 2 · UIC-033 2.9 MW · FIC-051 16 t/h · PIC-064 1.3 · TIC-060 188 · PIC-068 7.6 · PIC-049 −0.90 · TIC-111 85</td></tr></table>';
+  document.getElementById('card').innerHTML = h;
+})();
+(function () {
+  const b = document.body, sheets = [...document.querySelectorAll('.sheet')];
+  sheets.forEach((s, i) => {
+    const hd = document.createElement('table'); hd.className = 'dh';
+    hd.innerHTML = '<tr><td class="org">CDU UNIT 11<small>' + b.dataset.unit + '</small></td><td class="ttl">' + s.dataset.t + '<small>' + (s.dataset.s || '') + '</small></td>' +
+      '<td class="meta"><div><span>Doc no.</span><b>' + b.dataset.doc + '</b></div><div><span>Revision</span><b>' + b.dataset.rev + '</b></div><div><span>Page</span><b>' + (i + 1) + ' of ' + sheets.length + '</b></div></td></tr>';
+    s.prepend(hd);
+    const ft = document.createElement('div'); ft.className = 'foot';
+    ft.innerHTML = '<span>' + b.dataset.doc + ' rev ' + b.dataset.rev + ' · Training document — not design data · Uncontrolled when printed</span><span>Page ' + (i + 1) + ' of ' + sheets.length + '</span>';
+    s.append(ft);
+  });
+})();
+</script>
+</body>
+</html>

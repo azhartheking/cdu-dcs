@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU Unit 11 — Operator Log Sheet</title>
+<link rel="stylesheet" href="forms.css">
+<style>@page{size:A4 landscape;margin:0}
+col.c-tag{width:18mm} col.c-d{width:46mm} col.c-u{width:19mm} col.c-nr{width:30mm} col.c-al{width:36mm} col.c-rm{width:14mm}
+table.log td.nr,table.log td.al{font:7pt "Segoe UI",Arial,sans-serif} table.log td.u{font-size:7pt;white-space:nowrap} table.log td.d{font-size:7.6pt}</style>
+</head>
+<body class="landscape" data-doc="CDU-OPS-LOG-001" data-rev="1.0" data-unit="Unit 11 · Crude distillation (training unit)">
+<div class="noprint">Print with <b>Ctrl+P → Save as PDF</b>, A4 landscape, margins <b>None</b>, "Background graphics" ON. Or use the ready PDF in the Documents folder.</div>
+
+<div class="sheet" data-t="Operator Log Sheet — Shift Information and Handover" data-s="One log sheet per shift · panel operator">
+<div class="fields c4">
+<div>Date <span class="fill"></span></div><div>Shift <span class="chk">☐</span>Day 07–19 <span class="chk">☐</span>Night 19–07</div><div>Shift team <span class="fill"></span></div><div>Log no. <span class="fill"></span></div>
+<div>Panel operator <span class="fill"></span></div><div>Field operator(s) <span class="fill"></span></div><div>Shift supervisor <span class="fill"></span></div><div>Trainer <span class="fill"></span></div>
+<div>Target case <span class="fill"></span></div><div>Crude in charge (% Bach Ho) <span class="fill"></span></div><div>Desalters <span class="chk">☐</span>in service <span class="chk">☐</span>bypassed</div><div>Sim mode <span class="chk">☐</span>EASY <span class="chk">☐</span>HARD</div>
+</div>
+<div class="cols">
+<div><h2>Unit status at handover</h2>
+<p><span class="chk">☐</span> Normal operation at rate &nbsp; <span class="chk">☐</span> Reduced rate &nbsp; <span class="chk">☐</span> Crude switch in progress<br>
+<span class="chk">☐</span> Start-up in progress &nbsp; <span class="chk">☐</span> Shutdown in progress &nbsp; <span class="chk">☐</span> Circulation &nbsp; <span class="chk">☐</span> Tripped</p>
+<p>Charge ______ t/h &nbsp; COT ______ °C &nbsp; Top ______ °C &nbsp; Products <span class="chk">☐</span> ON-SPEC <span class="chk">☐</span> OFF-SPEC (which: ________)</p>
+<h3>Equipment out of service / on standby</h3>
+<table class="t"><tr><th style="width:22%">Tag</th><th>Status / reason</th><th style="width:22%">Since</th></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr></table>
+<h3>Active alarms / bypassed trips / controllers in MAN</h3>
+<div class="lines"><div></div><div></div><div></div><div></div></div>
+</div>
+<div><h2>Events during the shift</h2>
+<table class="t"><tr><th style="width:14%">Time</th><th>Event / action / instruction</th><th style="width:14%">Init.</th></tr>
+<tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr><tr><td style="height:7mm"></td><td></td><td></td></tr></table>
+<h3>Production this shift (t)</h3>
+<table class="t"><tr><th>LPG</th><th>Naphtha</th><th>Kero</th><th>LGO</th><th>HGO</th><th>Residue</th><th>Off-spec</th><th>Slops</th></tr><tr><td style="height:7mm"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>
+</div></div>
+<div class="sig" style="grid-template-columns:1fr 1fr"><div><b>Handed over by</b>Name / signature / time</div><div><b>Received by</b>Name / signature / time</div></div>
+<div class="box note small" style="margin-top:3mm"><b>Joint walk-through of the DCS done:</b> &nbsp; <span class="chk">☐</span> Overview &nbsp; <span class="chk">☐</span> Alarm list &nbsp; <span class="chk">☐</span> Heater &nbsp; <span class="chk">☐</span> T-1101 &nbsp; <span class="chk">☐</span> Overhead / stabilizer &nbsp; <span class="chk">☐</span> Quality page &nbsp; <span class="chk">☐</span> Flare</div>
+</div>
+
+<div class="sheet" data-t="Operator Log Sheet — Panel Readings (1/2)" data-s="Area 100 preheat & desalting · Area 200 heater · Area 300 fractionator" data-log="1"></div>
+<div class="sheet" data-t="Operator Log Sheet — Panel Readings (2/2)" data-s="Area 300 strippers · Area 400 overhead & stabilizer · 500 rundown · 900 utilities · lab" data-log="2"></div>
+
+<script>
+const LOG = {
+  1: [['sec', 'AREA 100 — Crude preheat and desalting'],
+    ['FIC-069', 'Charge to heater (8 passes)', 't/h', '790–830', 'L 400 · trip 243'], ['PIC-011', 'Desalter D-01 pressure', 'kg/cm²g', '11.8–12.2', 'H 13.0 · HH 13.5 · PSV 13.8'],
+    ['HIC-002', 'Crude blend — Bach Ho in charge', '%', 'per case', '—'], ['TI-COLD', 'Cold train outlet', '°C', '133–140', '—'],
+    ['TI-DES', 'Desalter temperature', '°C', '125–145', 'outside 120–150'], ['LIC-003', 'D-01 interface', '%', '40–60', 'H 75 · L 20 · XFMR 90'],
+    ['LIC-006', 'D-02 interface', '%', '40–60', 'H 75 · L 20'], ['PDIC-506', 'Mixing valve ΔP (503 / 506)', 'kg/cm²', '1.0–1.4', 'outside 0.8–1.8'],
+    ['FIC-004', 'Wash water (≈ 4 % of charge)', 't/h', '30–34', '—'], ['AI-SALT', 'Desalted salt / BS&W', 'ppm / %', '< 1 / < 0.1', 'H 2 / H 0.2'],
+    ['TDIC-007', 'Cold / hot train branch ΔT (007 / 015)', '°C', '± 3', '± 8'], ['TI-HOT', 'Hot train outlet (heater inlet)', '°C', '280–290', '—'],
+    ['sec', 'AREA 200 — Crude charge heater H-1101'],
+    ['TIC-066', 'Coil outlet temperature (COT)', '°C', 'recipe ± 2', 'H 372 · HH 385 · trip 390'], ['FI-PASS', 'Pass flows min / max', 't/h', '95–107', 'imbalance 15 %'],
+    ['TI-SKIN', 'Tube skin temperature max', '°C', '< 450', 'H 500 · HH 540'], ['AIC-063', 'Flue gas O2', '%', '2.5–3.5', 'L 1.5 · H 6'],
+    ['FI-FG', 'Fuel gas / burner pressure', 't/h / kg/cm²g', '6–7 / 0.7–0.9', 'PL 0.3 · trip 0.15'], ['PI-FG', 'Fuel-gas header', 'kg/cm²g', '4.3–4.7', 'L 3.5'],
+    ['TI-SH', 'Superheated stripping steam', '°C', '350–400', 'H 420'], ['TI-STACK', 'Stack temperature / bridgewall', '°C', '155–175 / 740–780', '—'],
+    ['sec', 'AREA 300 — Main fractionator T-1101'],
+    ['TIC-076', 'T-1101 top temperature', '°C', 'recipe ± 1', 'H 135 · L 115'], ['DEW', 'Water dew-point margin (top − dew)', '°C', '> 12', 'L 10 · LL 5'],
+    ['PI-TOP', 'Top / flash-zone pressure', 'kg/cm²g', '1.5 / 1.86', 'H 2.5 · PSV 3.5'], ['TI-FZ', 'Flash zone / bottom temperature', '°C', '350–356 / 346–352', '—'],
+    ['LIC-007', 'T-1101 bottoms level', '%', '40–60', 'H 80 · HH 95 · L 20 · LL 5'], ['FI-OF', 'Overflash', '% feed', '2–3', 'L 1.0']],
+  2: [['sec', 'AREA 300 — Pumparounds, draws, stripping'],
+    ['UIC-029', 'Kero / LGO PA duty (029 / 032)', 'MW', '9 / 31', 'dev 15 %'], ['UIC-031', 'HGO PA / E-1110 duty (031 / 033)', 'MW', '2.0 / 2.9', '—'],
+    ['FQIC-033', 'Kerosene product', 't/h', 'recipe', '—'], ['FQIC-020', 'LGO product', 't/h', 'recipe', '—'], ['FQIC-024', 'HGO product', 't/h', 'recipe', '—'],
+    ['FIC-051', 'Strip steam 051 / 052 / 053', 't/h', '16 / 5.1 / 2.6', 'WET if T < 150'], ['LIC-016', 'Stripper levels 011 / 013 / 016', '%', '40–60', 'L 15'],
+    ['sec', 'AREA 400 — Overhead and naphtha stabilizer'],
+    ['PIC-064', 'D-1103 pressure / output', 'kg/cm²g / %', '1.25–1.35 / 35–50', 'H 2.0 · L 0.8 · flare > 67 %'], ['LIC-038', 'D-1103 naphtha level', '%', '40–60', 'H 80 · L 15 · LL 5'],
+    ['LIC-040', 'D-1103 boot interface', '%', '40–60', 'H 80'], ['AI-PH', 'Boot water pH / chloride', '– / ppm', '5.8–6.8 / < 10', 'L 5.5 / H 30'],
+    ['TIC-060', 'T-1107 bottom temperature', '°C', '186–190', 'L 180'], ['PIC-068', 'D-1104 pressure', 'kg/cm²g', '7.5–7.7', 'H 8.6 · PSV 9.6'],
+    ['LIC-047', 'D-1104 level / reflux', '% / t/h', '40–60 / per case', 'H 80 · HH 90 (UX-024)'], ['FQIC-037', 'LPG product', 't/h', 'recipe', '—'],
+    ['sec', 'AREA 500 / 900 — Rundown, dryers, utilities'],
+    ['PIC-049', 'Dryer vacuum', 'kg/cm²g', '−0.92…−0.88', 'H −0.75'], ['TIC-111', 'Residue to storage', '°C', '80–90', 'H 95'],
+    ['FV-026', 'Residue to RFCC / storage', 't/h', '340 / 60–70', '—'], ['UTIL', 'LP / MP / HP steam headers', 'kg/cm²g', '3.5 / 10 / 40', 'L 2.5 / 7 / 30'],
+    ['FL-901', 'Flare load', 't/h', '< 1', 'H 10'],
+    ['sec', 'LABORATORY (lab values on the Quality page)'],
+    ['LAB', 'Kero flash / freeze / smoke', '°C / °C / mm', '≥ 40 / (≤ −47 Jet) / ≥ 20', 'spec'], ['LAB', 'LGO flash / pour / water', '°C / °C / ppm', '≥ 65 / ≤ 0 / ≤ 200', 'spec'],
+    ['LAB', 'Residue < 360 °C / HGO CCR', 'vol% / wt%', '≤ 10 / ≤ 0.3', 'spec'], ['LAB', 'LPG C5+ / naphtha C4', 'mol% / wt%', '≤ 1.5 / ≤ 0.3', 'spec']]
+};
+document.querySelectorAll('.sheet[data-log]').forEach(s => {
+  let h = '<div class="fields c4" style="margin:0 0 2mm"><div>Date <span class="fill"></span></div><div>Shift <span class="fill"></span></div><div>Case <span class="fill"></span></div><div>Operator <span class="fill"></span></div></div>';
+  h += '<table class="log"><colgroup><col class="c-tag"><col class="c-d"><col class="c-u"><col class="c-nr"><col class="c-al">' + '<col>'.repeat(12) + '<col class="c-rm"></colgroup>';
+  h += '<tr><th>Tag</th><th>Description</th><th>Unit</th><th>Normal range</th><th>Alarm / trip</th>' + Array.from({ length: 12 }, (_, i) => '<th class="tm">' + (i + 1) + ' h<span>____</span></th>').join('') + '<th>Remarks</th></tr>';
+  for (const r of LOG[s.dataset.log]) {
+    if (r[0] === 'sec') h += '<tr class="sec"><td colspan="18">' + r[1] + '</td></tr>';
+    else h += '<tr><td class="tag">' + r[0] + '</td><td class="d">' + r[1] + '</td><td class="u">' + r[2] + '</td><td class="nr">' + r[3] + '</td><td class="al">' + r[4] + '</td>' + '<td class="r"></td>'.repeat(12) + '<td></td></tr>';
+  }
+  s.innerHTML = h + '</table>';
+});
+(function () {
+  const b = document.body, sheets = [...document.querySelectorAll('.sheet')];
+  sheets.forEach((s, i) => {
+    const hd = document.createElement('table'); hd.className = 'dh';
+    hd.innerHTML = '<tr><td class="org">CDU UNIT 11<small>' + b.dataset.unit + '</small></td><td class="ttl">' + s.dataset.t + '<small>' + (s.dataset.s || '') + '</small></td>' +
+      '<td class="meta"><div><span>Doc no.</span><b>' + b.dataset.doc + '</b></div><div><span>Revision</span><b>' + b.dataset.rev + '</b></div><div><span>Page</span><b>' + (i + 1) + ' of ' + sheets.length + '</b></div></td></tr>';
+    s.prepend(hd);
+    const ft = document.createElement('div'); ft.className = 'foot';
+    ft.innerHTML = '<span>' + b.dataset.doc + ' rev ' + b.dataset.rev + ' · Training document — not design data · Uncontrolled when printed</span><span>Page ' + (i + 1) + ' of ' + sheets.length + '</span>';
+    s.append(ft);
+  });
+})();
+</script>
+</body>
+</html>

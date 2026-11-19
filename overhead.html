@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — 400 Overhead & Naphtha Stabilizer</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="overhead">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+UI.page({
+  defaultTag: 'PIC-064',
+  side: ['kpi', 'trend:top', 'trend:stab'],
+  draw(d) {
+    d.label(20, 26, 'AREA 400 — T-1101 OVERHEAD SYSTEM AND NAPHTHA STABILIZER T-1107', 'lbl big');
+    // ---- overhead vapour, chemicals, air condenser
+    d.link(14, 66, 'T-1101 OVERHEAD', 'fract.html#TIC-076', 'l');
+    d.pipe([[150, 66], [300, 66]], 'gas', { noArrow: true });
+    d.motor(200, 92, 'NEUT', 'sw', ''); d.label(220, 112, 'neutralizer + corrosion inhibitor', 'lbl s');
+    d.pipe([[200, 82], [200, 66]], 'hc', { noArrow: true });
+    d.rect(300, 50, 120, 32, 'eq', 3); d.label(360, 70, 'E-1111 air condenser', 'lbl s', 'middle');
+    d.motor(450, 66, 'E1111', 'fan', ''); d.label(470, 56, 'fans', 'lbl s');
+    d.pipe([[360, 82], [360, 196]], 'hc');
+    d.ind(20, 500, 'Condenser load / capacity', S => fx(S.p.Qovh, 1) + ' / ' + fx(S.p.Qcap, 1), 'MW', 1, 170, 'E-1111');
+    d.ind(20, 538, 'Uncondensed vapour', S => S.p.unc, 't/h', 1, 170, 'E-1111');
+    // ---- D-1103 accumulator with water boot
+    d.drum(220, 196, 260, 60, '', true);
+    d.level(228, 204, 244, 44, S => S.p.L1103);
+    d.label(350, 232, 'D-1103 accumulator', 'lbl', 'middle');
+    d.dyn(350, 246, S => fx(S.p.P1103, 2) + ' kg/cm²g · ' + fx(S.p.T1103, 1) + ' °C', 'lbl s', 'middle');
+    // pressure control PIC-064 3-way split range
+    d.pipe([[260, 196], [260, 150], [120, 150]], 'gas');
+    d.valve(200, 150, 'PIC-064', false, 'PV-064A FG', S => Math.max(0, (33 - S.ctl['PIC-064'].op) / 33 * 100));
+    d.label(60, 154, 'fuel gas', 'lbl s', 'end');
+    d.pipe([[300, 196], [300, 150], [560, 150]], 'gas');
+    d.valve(440, 150, 'PIC-064', false, 'PV-064B RFCC', S => Math.min(100, Math.max(0, (S.ctl['PIC-064'].op - 33) / 34 * 100)));
+    d.label(520, 144, 'off gas → RFCC', 'lbl s');
+    d.pipe([[330, 150], [330, 120], [560, 120]], 'flare');
+    d.valve(470, 120, 'PIC-064', false, 'PV-064C FLARE', S => Math.max(0, (S.ctl['PIC-064'].op - 67) / 33 * 100));
+    d.label(520, 114, '→ flare', 'lbl s');
+    d.tag(80, 220, 'PIC-064');
+    d.ind(560, 174, 'Off gas RFCC / flare', S => fx(S.p.ogRFCC, 2) + ' / ' + fx(S.p.og64F, 1), 't/h', 1, 150, 'PIC-064');
+    // boot water
+    d.pipe([[392, 278], [392, 320], [300, 320]], 'water');
+    d.valve(340, 320, 'LIC-040');
+    d.label(296, 324, 'sour water → D-1106 → SWS', 'lbl s', 'end');
+    d.tag(20, 300, 'LIC-040', 112);
+    d.psv(110, 360, 'PSV-170', 'r');
+    d.ind(20, 410, 'Boot water pH', S => S.p.pH, '', 2, 112, 'AI-PH');
+    d.ind(140, 410, 'Chloride', S => S.p.Cl, 'ppm', 1, 112, 'AI-CL');
+    d.ind(20, 450, 'Corrosion index', S => S.p.corr, '', 2, 112);
+    d.ind(140, 450, 'Sour water', S => S.p.Fsw, 't/h', 1, 112);
+    // naphtha to the stabilizer
+    d.pipe([[460, 256], [460, 360], [500, 360]], 'hc', { noArrow: true });
+    d.motor(516, 360, 'P1110', 'pump', 'P-1110');
+    d.pipe([[530, 360], [560, 360]], 'hc', { noArrow: true });
+    d.valve(560, 360, 'LIC-038', false, 'FV-032');
+    d.pipe([[570, 360], [600, 360]], 'hc', { noArrow: true });
+    d.hx(616, 360, ''); d.label(616, 392, 'E-1118 A/B', 'lbl s', 'middle');
+    d.pipe([[632, 360], [700, 360]], 'hc');
+    d.tag(380, 400, 'LIC-038', 112);
+    d.ind(520, 430, 'Stab. feed FI-032', S => S.p.Fsf, 't/h', 1, 120);
+    // ---- stabilizer T-1107
+    d.column(700, 90, 54, 460, '', [[0.05, ''], [0.5, ''], [0.93, '']]);
+    d.label(727, 84, 'T-1107', 'lbl', 'middle');
+    d.label(727, 115, 'tray 1', 'lbl s', 'middle'); d.label(727, 336, '16', 'lbl s', 'middle'); d.label(727, 520, '32', 'lbl s', 'middle');
+    d.level(704, 500, 46, 46, S => S.p.Lst);
+    d.pipe([[727, 90], [727, 60], [840, 60]], 'gas', { noArrow: true });
+    d.pipe([[790, 60], [790, 44]], 'flare', { noArrow: true }); d.psv(790, 32, 'PSV-237', 'l');
+    d.hx(860, 60, ''); d.label(860, 92, 'E-1122 (CW)', 'lbl s', 'middle');
+    d.pipe([[876, 60], [930, 60], [930, 112]], 'hc');
+    d.drum(880, 112, 200, 50, '', false);
+    d.level(888, 118, 184, 38, S => S.p.L1104);
+    d.label(980, 140, 'D-1104 reflux drum', 'lbl', 'middle');
+    // PIC-068 split range
+    d.pipe([[1060, 112], [1060, 90], [1180, 90]], 'gas');
+    d.valve(1100, 90, 'PIC-068', false, 'PV-068B RFCC', S => Math.min(100, Math.max(0, (S.ctl['PIC-068'].op - 33) / 34 * 100)));
+    d.pipe([[1040, 112], [1040, 56], [1180, 56]], 'flare', { noArrow: true });
+    d.valve(1150, 56, 'PIC-068', false, 'PV-068C', S => Math.max(0, (S.ctl['PIC-068'].op - 67) / 33 * 100));
+    d.label(1176, 48, 'flare', 'lbl s', 'end');
+    d.tag(1080, 172, 'PIC-068', 112);
+    // reflux and LPG
+    d.pipe([[960, 162], [960, 220]], 'hc', { noArrow: true });
+    d.motor(960, 236, 'P1114', 'pump', '');
+    d.label(960, 266, 'P-1114', 'lbl s', 'middle');
+    d.pipe([[946, 236], [790, 236], [790, 110], [754, 110]], 'hc');
+    d.valve(860, 236, 'LIC-047', false, 'FV-036');
+    d.tag(800, 270, 'LIC-047', 112);
+    d.pipe([[1040, 162], [1040, 236]], 'hc', { noArrow: true });
+    d.motor(1040, 252, 'P1115', 'pump', '');
+    d.label(1060, 256, 'P-1115', 'lbl s');
+    d.pipe([[1040, 266], [1040, 300], [1120, 300]], 'hc');
+    d.valve(1080, 300, 'FQIC-037', false, 'FV-037');
+    d.link(1120, 300, 'LPG → RFCC', 'utilities.html');
+    d.tag(1060, 322, 'FQIC-037', 112);
+    // reboiler and bottoms
+    d.link(1060, 430, 'HP STEAM 40', 'utilities.html#PI-HPS', 'l');
+    d.pipe([[1060, 430], [900, 430]], 'steam', { noArrow: true });
+    d.valve(960, 430, 'TIC-060', false, 'FV-060');
+    d.hx(880, 470, ''); d.label(900, 474, 'E-1121 reboiler (DS-1101)', 'lbl s');
+    d.pipe([[900, 430], [880, 430], [880, 454]], 'steam', { noArrow: true });
+    d.pipe([[754, 520], [864, 520], [864, 486]], 'hc', { noArrow: true }); d.pipe([[864, 470], [800, 470], [800, 430], [754, 430]], 'gas');
+    d.tag(980, 372, 'TIC-060', 112);
+    d.pipe([[727, 550], [727, 600], [616, 600], [616, 376]], 'hc', { noArrow: true });
+    d.pipe([[616, 600], [560, 600], [560, 620], [900, 620]], 'hc');
+    d.valve(800, 620, 'LIC-042', false, 'FV-040 NHT', S => Math.min(100, S.ctl['LIC-042'].op * 2));
+    d.link(900, 620, 'NAPHTHA → NHT / STORAGE', 'rundown.html#LIC-042');
+    d.tag(780, 530, 'LIC-042', 112);
+    // stabilizer indicators
+    d.ind(980, 480, 'T-1107 bottom', S => S.p.Tst, '°C', 1, 96);
+    d.ind(1082, 480, 'T-1107 top', S => S.p.Ttst, '°C', 1, 96);
+    d.ind(980, 518, 'HP steam', S => S.p.Fhp, 't/h', 1, 96);
+    d.ind(1082, 518, 'Reflux FI-036', S => S.p.Rst, 't/h', 1, 96);
+    d.ind(980, 556, 'Lab LPG C5+', S => S.p.lab.C5, 'mol%', 2, 96, 'LAB');
+    d.ind(1082, 556, 'Lab nap. C4', S => S.p.lab.C4N, 'wt%', 2, 96, 'LAB');
+    d.ind(560, 470, 'Stab. pressure', S => S.p.Pst, 'kg/cm²g', 2, 120, 'PIC-068');
+  }
+});
+</script>
+</body>
+</html>

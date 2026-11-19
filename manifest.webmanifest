@@ -1,0 +1,14 @@
+{
+  "name": "CDU Unit 11 — DCS Training Simulator",
+  "short_name": "CDU DCS",
+  "description": "Control-room training simulator of an atmospheric crude distillation unit (preheat, desalting, fired heater, main fractionator, stabilizer). Training model, not design data.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#c6c8ca",
+  "theme_color": "#9b9ea1",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — Overview</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="index">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+const q = (pr) => (S) => S.p.F < 100 ? '—' : (S.p.ok && S.p.ok[pr] ? 'ON-SPEC' : 'OFF-SPEC') + (S.route[pr === 'LPG' ? 'NAP' : pr] === 'SLOPS' ? ' → slops' : '');
+UI.page({
+  defaultTag: 'FIC-069',
+  side: ['kpi', 'trend:prod'],
+  draw(d) {
+    d.label(20, 26, 'CRUDE DISTILLATION UNIT 11 — OVERVIEW (6.5 MTPA · Bach Ho / Dubai)', 'lbl big');
+    // ---- area boxes
+    d.area(20, 40, 330, 300, '100 PREHEAT & DESALTING', 'preheat.html');
+    d.area(370, 40, 200, 300, '200 CRUDE HEATER H-1101', 'heater.html');
+    d.area(590, 40, 270, 600, '300 MAIN FRACTIONATOR T-1101', 'fract.html');
+    d.area(880, 40, 300, 330, '400 OVERHEAD & STABILIZER', 'overhead.html');
+    d.area(880, 390, 300, 250, '500 RUNDOWN & DRYERS', 'rundown.html');
+    d.area(20, 360, 550, 280, '900 UTILITIES · FLARE · SIS', 'utilities.html');
+    // ---- 100
+    d.motor(56, 100, 'P6001', 'pump', 'P-6001');
+    d.pipe([[70, 100], [110, 100]], 'crude', { noArrow: true });
+    d.hx(126, 100, ''); d.label(126, 80, 'cold train', 'lbl s', 'middle');
+    d.pipe([[142, 100], [170, 100]], 'crude', { noArrow: true });
+    d.drum(170, 86, 80, 28, ''); d.label(210, 128, 'desalters', 'lbl s', 'middle');
+    d.pipe([[250, 100], [280, 100]], 'crude', { noArrow: true });
+    d.hx(296, 100, ''); d.label(296, 80, 'hot train', 'lbl s', 'middle');
+    d.pipe([[312, 100], [400, 100]], 'crude');
+    d.tag(30, 150, 'FIC-069'); d.tag(160, 150, 'PIC-011');
+    d.ind(30, 210, 'Bach Ho in charge', S => S.p.xBH * 100, '%', 1, 120, 'HIC-002');
+    d.ind(160, 210, 'Desalted salt', S => S.p.salt, 'ppm', 2, 120, 'AI-SALT');
+    d.ind(30, 250, 'Cold train out', S => S.p.Tcold, '°C', 1, 120);
+    d.ind(160, 250, 'Hot train out', S => S.p.Thot, '°C', 1, 120);
+    d.ind(30, 290, 'Desalters', S => S.eq.DSAL ? (S.eq.XFMR ? 'IN SERVICE' : 'NO GRIDS') : 'BYPASSED', '', 0, 120, 'HS-001');
+    d.ind(160, 290, 'Charge source', S => S.feedSrc === 'CRUDE' ? 'CRUDE' : 'FLUSH OIL', '', 0, 120, 'HS-003');
+    // ---- 200
+    d.rect(410, 80, 120, 120, 'firebox', 3);
+    d.label(470, 214, 'H-1101', 'lbl', 'middle');
+    const f = document.createElementNS('http://www.w3.org/2000/svg', 'path'); f.setAttribute('class', 'fire flame'); d.layer.fg.appendChild(f);
+    UI.bind(f, S => { const h = S.eq.BURN ? 20 + 70 * Math.min(1.2, S.p.Qfired / 95) : 0; f.setAttribute('d', `M455,196 Q450,${196 - h / 2} 470,${196 - h} Q490,${196 - h / 2} 485,196 Z`); f.style.opacity = h ? 0.85 : 0; });
+    d.pipe([[530, 100], [600, 100], [600, 480], [650, 480]], 'crude');
+    d.tag(380, 222, 'TIC-066', 112);
+    d.ind(380, 270, 'Absorbed duty', S => S.p.Qabs, 'MW', 1, 112);
+    d.ind(380, 306, 'Flue O2', S => S.p.O2, '%', 2, 112, 'AIC-063');
+    d.motor(540, 240, 'BURN', 'flame', '');
+    // ---- 300 column
+    d.column(650, 70, 50, 520, '', [[0.15, ''], [0.36, ''], [0.6, ''], [0.8, '']]);
+    d.label(675, 610, 'T-1101', 'lbl', 'middle');
+    d.level(654, 550, 42, 36, S => S.p.Lbot);
+    d.pipe([[675, 70], [675, 56], [960, 56], [960, 90]], 'gas');
+    const draw = (y, lbl, fn, pr, tag) => { d.pipe([[700, y], [760, y]], 'hc'); d.ind(762, y - 16, lbl, fn, 't/h', 1, 92, tag); d.ind(762, y + 18, '', q(pr), '', 0, 92, 'LAB'); };
+    draw(160, 'Kerosene', S => S.p.Fkero, 'KERO', 'FQIC-033');
+    draw(270, 'LGO', S => S.p.Flgo, 'LGO', 'FQIC-020');
+    draw(390, 'HGO', S => S.p.Fhgo, 'HGO', 'FQIC-024');
+    d.pipe([[675, 590], [675, 620], [760, 620]], 'res'); d.ind(762, 590, 'Residue', S => S.p.FresProd, 't/h', 1, 92, 'LIC-007'); d.ind(762, 624, '', q('RES'), '', 0, 92, 'LAB');
+    d.ind(706, 80, 'Top T', S => S.p.Ttop, '°C', 1, 76, 'TIC-076');
+    d.ind(706, 450, 'Overflash', S => S.p.OF, '%', 2, 76, 'FI-OF');
+    d.ind(706, 500, 'Dew margin', S => S.p.dewM > 90 ? '—' : fx(S.p.dewM, 1), '°C', 1, 76, 'TIC-076');
+    // ---- 400
+    d.drum(900, 90, 120, 34, ''); d.label(960, 140, 'D-1103', 'lbl s', 'middle');
+    d.pipe([[1020, 108], [1060, 108]], 'hc', { noArrow: true });
+    d.column(1060, 70, 34, 200, '', []); d.label(1077, 284, 'T-1107', 'lbl s', 'middle');
+    d.ind(900, 160, 'D-1103 pressure', S => S.p.P1103, 'kg/cm²g', 2, 140, 'PIC-064');
+    d.ind(900, 200, 'Off gas to flare', S => S.p.og64F || 0, 't/h', 1, 140, 'PIC-064');
+    d.ind(900, 240, 'Stabilizer bottom', S => S.p.Tst, '°C', 1, 140, 'TIC-060');
+    d.ind(1100, 90, 'LPG', S => S.p.Flpg, 't/h', 2, 74, 'FQIC-037'); d.ind(1100, 124, '', q('LPG'), '', 0, 74, 'LAB');
+    d.ind(1100, 180, 'Naphtha', S => S.p.Fnap + S.p.FnapSto, 't/h', 1, 74, 'LIC-042'); d.ind(1100, 214, '', q('NAP'), '', 0, 74, 'LAB');
+    d.ind(900, 290, 'Water dew pt / top', S => fx(S.p.Tdew, 0) + ' / ' + fx(S.p.Ttop, 0), '°C', 0, 140, 'TIC-076');
+    // ---- 500
+    d.ind(900, 420, 'Dryer vacuum', S => S.p.Pdry, 'kg/cm²g', 3, 130, 'PIC-049');
+    d.ind(1040, 420, 'LGO water', S => S.p.ppmW, 'ppm', 0, 130, 'LAB');
+    d.ind(900, 460, 'Residue → RFCC', S => S.p.toRFCC, 't/h', 0, 130, 'FV-026');
+    d.ind(1040, 460, 'Residue → storage', S => S.p.toSto, 't/h', 0, 130, 'TIC-111');
+    d.ind(900, 500, 'Kero freeze (lab)', S => S.p.lab.FRZ, '°C', 1, 130, 'LAB');
+    d.ind(1040, 500, 'LGO pour (lab)', S => S.p.lab.POUR, '°C', 1, 130, 'LAB');
+    d.ind(900, 540, 'Kero flash (lab)', S => S.p.lab.KFL, '°C', 1, 130, 'LAB');
+    d.ind(1040, 540, 'Residue <360 (lab)', S => S.p.lab.R360, 'vol%', 1, 130, 'LAB');
+    d.ind(900, 590, 'Routes', S => Object.entries(S.route).filter(([k, v]) => v === 'SLOPS').map(([k]) => k).join(', ') || 'all to product', 'slops', 0, 270);
+    // ---- 900 utilities / SIS
+    d.ind(30, 400, 'Flare load', S => S.p.flare || 0.5, 't/h', 1, 120, 'FL-901');
+    d.ind(160, 400, 'Fuel-gas header', S => S.p.fgH, 'kg/cm²g', 2, 120, 'PI-FG');
+    d.ind(290, 400, 'LP steam', S => S.p.lpP, 'kg/cm²g', 2, 120, 'PI-LPS');
+    d.ind(420, 400, 'Cooling water', S => S.p.cwS, '°C', 1, 120, 'TI-CW');
+    d.ind(30, 450, 'Heater SIS UX-005', S => S.sis.htrTrip ? 'TRIPPED' : (S.eq.BURN ? 'FIRING' : 'OUT'), '', 0, 160, 'H-1101');
+    d.ind(200, 450, 'Desalter UX-001', S => S.sis.cut.ux001 ? 'TRIPPED' : 'normal', '', 0, 160, 'UX-001');
+    d.ind(370, 450, 'CDU ESD UX-007', S => S.sis.esd ? 'ACTIVE' : 'normal', '', 0, 160, 'UX-007');
+    d.ind(30, 490, 'SIS', S => S.sis.bypass ? 'BYPASSED' : 'NORMAL', '', 0, 160, 'SIS');
+    d.ind(200, 490, 'Stabilizer UX-024', S => S.sis.cut.reb ? 'REBOILER CUT' : 'normal', '', 0, 160, 'TIC-060');
+    d.ind(370, 490, 'PSVs open', S => S.psv ? Object.keys(S.psv).filter(k => S.psv[k].open).join(', ') || 'none' : 'none', '', 0, 160, 'FL-901');
+    d.ind(30, 540, 'Circulation HS-100', S => S.circ, '', 0, 160, 'HS-100');
+    d.ind(200, 540, 'Tube skin max', S => S.p.skinMax, '°C', 0, 160, 'TI-SKIN');
+    d.ind(370, 540, 'Overhead corrosion', S => S.p.corr, 'index', 2, 160, 'AI-CL');
+    // UX-007 push button
+    d.btn(30, 590, 220, (S) => S.sis.esd ? 'UX-007 ESD ACTIVE — click to RESET' : 'UX-007 CDU EMERGENCY SHUTDOWN', () => {
+      const S = CDU.rt.S;
+      if (S.sis.esd) { if (confirm('Reset the UX-007 emergency shutdown? Equipment does not restart by itself.')) CDU.cmd({ type: 'esd', on: false }); }
+      else if (confirm('Initiate UX-007 CDU EMERGENCY SHUTDOWN? This stops the charge, trips the heater and cuts stripping steam.')) CDU.cmd({ type: 'esd', on: true });
+    }, (S) => S.sis.esd);
+  }
+});
+</script>
+</body>
+</html>

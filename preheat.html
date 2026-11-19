@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — 100 Preheat & Desalting</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="preheat">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+UI.page({
+  defaultTag: 'PIC-011',
+  side: ['kpi', 'trend:preheat', 'trend:desalter'],
+  draw(d) {
+    d.label(20, 26, 'AREA 100 — CRUDE PREHEAT TRAINS AND DESALTING A-1101', 'lbl big');
+    // ---- crude from tankage, charge pumps, blend station
+    d.link(14, 92, 'CRUDE TK-6001/2', 'utilities.html', 'l');
+    d.pipe([[128, 92], [160, 92]], 'crude', { noArrow: true });
+    d.motor(176, 92, 'P6001', 'pump', 'P-6001 A/B/C');
+    d.tag(20, 128, 'HIC-002');
+    d.sel(20, 192, 'HS-003 charge source', ['FLUSH', 'CRUDE'], S => S.feedSrc, v => CDU.cmd({ type: 'src', v }));
+    d.pipe([[190, 92], [262, 92]], 'crude', { noArrow: true });
+    d.valve(236, 92, 'PIC-011');
+    d.tag(196, 128, 'PIC-011');
+    d.psv(520, 52, 'TSV-310', 'r');
+    // ---- cold train: two branches with TV-007A/B
+    d.pipe([[262, 92], [290, 92], [290, 70], [312, 70]], 'crude', { noArrow: true });
+    d.pipe([[290, 92], [290, 160], [312, 160]], 'crude', { noArrow: true });
+    d.valve(320, 70, 'TDIC-007', false, 'TV-007A', S => S.ctl['TDIC-007'].op);
+    d.valve(320, 160, 'TDIC-007', false, 'TV-007B', S => 100 - S.ctl['TDIC-007'].op);
+    d.pipe([[330, 70], [360, 70]], 'crude', { noArrow: true }); d.pipe([[330, 160], [360, 160]], 'crude', { noArrow: true });
+    d.hx(376, 70, ''); d.label(376, 48, 'E-1101 A-H', 'lbl s', 'middle'); d.label(376, 98, 'residue', 'lbl s', 'middle');
+    d.hx(430, 70, ''); d.label(430, 48, 'E-1103 A/B', 'lbl s', 'middle'); d.label(430, 98, 'LGO prod.', 'lbl s', 'middle');
+    d.hx(376, 160, ''); d.label(376, 138, 'E-1102', 'lbl s', 'middle'); d.label(376, 188, 'kero PA', 'lbl s', 'middle');
+    d.hx(430, 160, ''); d.label(430, 138, 'E-1104', 'lbl s', 'middle'); d.label(430, 188, 'HGO prod.', 'lbl s', 'middle');
+    d.pipe([[392, 70], [414, 70]], 'crude', { noArrow: true }); d.pipe([[392, 160], [414, 160]], 'crude', { noArrow: true });
+    d.pipe([[446, 70], [480, 70], [480, 115]], 'crude', { noArrow: true }); d.pipe([[446, 160], [480, 160], [480, 115], [500, 115]], 'crude', { noArrow: true });
+    d.tag(330, 200, 'TDIC-007');
+    d.ind(456, 208, 'TI cold train out', S => S.p.Tcold, '°C', 1, 112);
+    // ---- desalter 1st stage
+    d.pipe([[500, 115], [520, 115], [520, 300], [540, 300]], 'crude', { noArrow: true });
+    d.valve(520, 255, 'PDIC-503', true);
+    d.tag(398, 246, 'PDIC-503');
+    d.drum(548, 278, 170, 54, 'A-1101-D-01 (1st stage)');
+    d.level(556, 284, 154, 42, S => S.p.L1);
+    d.dyn(633, 312, S => S.eq.DSAL ? 'interface ' + fx(S.p.L1, 0) + ' %' : 'BYPASSED', 'lbl s', 'middle');
+    d.pipe([[600, 278], [600, 262]], 'hc', { noArrow: true }); d.psv(600, 250, 'PSV-005', 'r');
+    // brine from D-01
+    d.pipe([[633, 332], [633, 360], [700, 360]], 'water');
+    d.valve(660, 360, 'LIC-003'); d.label(708, 364, 'brine → E-1128 / E-1129 → ETP', 'lbl s');
+    d.tag(560, 384, 'LIC-003');
+    // ---- desalter 2nd stage
+    d.pipe([[718, 300], [744, 300], [744, 200], [770, 200]], 'crude', { noArrow: true });
+    d.valve(744, 250, 'PDIC-506', true);
+    d.tag(600, 150, 'PDIC-506');
+    d.drum(778, 178, 170, 54, 'A-1101-D-02 (2nd stage)');
+    d.level(786, 184, 154, 42, S => S.p.L2);
+    d.dyn(863, 212, S => S.eq.DSAL ? 'interface ' + fx(S.p.L2, 0) + ' %' : 'BYPASSED', 'lbl s', 'middle');
+    d.pipe([[800, 178], [800, 162]], 'hc', { noArrow: true }); d.psv(800, 150, 'PSV-172', 'r');
+    d.motor(790, 470, 'DSAL', 'sw', ''); d.label(790, 496, 'HS-001 in service', 'lbl s', 'middle');
+    d.motor(880, 470, 'XFMR', 'sw', ''); d.label(880, 496, 'TR-01/02 grids', 'lbl s', 'middle');
+    d.motor(970, 470, 'DEMUL', 'sw', ''); d.label(970, 496, 'demulsifier', 'lbl s', 'middle');
+    // recycle water D-02 → D-01 (P-1118) and fresh wash water (P-1119)
+    d.pipe([[863, 232], [863, 260], [880, 260]], 'water', { noArrow: true });
+    d.motor(896, 270, 'P1118', 'pump', 'P-1118');
+    d.pipe([[896, 284], [896, 300], [744, 300]], 'water', { noArrow: true });
+    d.valve(830, 300, 'LIC-006'); d.label(770, 292, 'recycle to D-01', 'lbl s');
+    d.tag(900, 330, 'LIC-006', 104);
+    d.rect(1010, 260, 44, 60, 'eq', 10); d.label(1032, 334, 'D-1109', 'lbl s', 'middle'); d.label(1032, 346, 'wash water', 'lbl s', 'middle');
+    d.pipe([[1032, 260], [1032, 246]], 'water', { noArrow: true }); d.psv(1032, 234, 'PSV-239', 'l');
+    d.motor(1032, 390, 'P1119', 'pump', 'P-1119');
+    d.pipe([[1032, 320], [1032, 376]], 'water', { noArrow: true });
+    d.pipe([[1032, 404], [1032, 430], [1090, 430], [1090, 160], [744, 160], [744, 200]], 'water');
+    d.hx(1090, 300, ''); d.label(1108, 280, 'E-1128', 'lbl s'); d.label(1108, 292, '→ 120 °C', 'lbl s');
+    d.valve(980, 160, 'FIC-004');
+    d.tag(960, 196, 'FIC-004', 112);
+    // ---- desalted crude → booster → hot train
+    d.pipe([[948, 205], [970, 205], [970, 120], [940, 120]], 'crude', { noArrow: true });
+    d.motor(924, 120, 'P1101', 'pump', 'P-1101 A/B');
+    d.pipe([[908, 120], [880, 120], [880, 92], [800, 92]], 'crude', { noArrow: true });
+    d.ind(760, 40, 'TI desalter', S => S.p.Tdes, '°C', 1, 100, 'TI-DES');
+    d.ind(866, 40, 'Salt out', S => S.p.salt, 'ppm', 2, 100, 'AI-SALT');
+    d.ind(972, 40, 'BS&W out', S => S.p.bsw, 'vol%', 2, 100, 'AI-BSW');
+    d.ind(1078, 40, 'Salt in crude', S => S.p.saltIn, 'ppm', 1, 110);
+    d.ind(972, 80, 'Stage efficiency', S => fx(S.p.eff1 * 100, 0) + ' / ' + fx(S.p.eff2 * 100, 0), '%', 0, 100);
+    d.ind(1078, 80, 'Wash water', S => S.p.wash, '% crude', 1, 110);
+    // hot train branches A/B with TV-015A/B
+    d.pipe([[800, 92], [770, 92]], 'crude', { noArrow: true });
+    d.label(20, 452, 'HOT PREHEAT TRAIN (2nd train)', 'lbl area');
+    d.pipe([[770, 92], [760, 92], [760, 140], [740, 140], [740, 470], [700, 470]], 'crude', { noArrow: true });
+    d.pipe([[700, 470], [690, 470], [690, 500], [670, 500]], 'crude', { noArrow: true });
+    d.pipe([[690, 470], [690, 580], [670, 580]], 'crude', { noArrow: true });
+    d.valve(660, 500, 'TDIC-015', false, 'TV-015A', S => S.ctl['TDIC-015'].op);
+    d.valve(660, 580, 'TDIC-015', false, 'TV-015B', S => 100 - S.ctl['TDIC-015'].op);
+    d.pipe([[650, 500], [600, 500]], 'crude', { noArrow: true }); d.pipe([[650, 580], [600, 580]], 'crude', { noArrow: true });
+    [[584, 500, 'E-1105 A-J', 'residue'], [520, 500, 'E-1107', 'HGO prod.'], [456, 500, 'E-1109', 'HGO PA'], [392, 500, 'E-1134 A/B', 'residue'],
+     [584, 580, 'E-1106 A-F', 'LGO PA'], [456, 580, 'E-1108 A-D', 'residue']].forEach(([x, y, t, s]) => { d.hx(x, y, ''); d.label(x, y - 22, t, 'lbl s', 'middle'); d.label(x, y + 28, s, 'lbl s', 'middle'); });
+    d.pipe([[568, 500], [536, 500]], 'crude', { noArrow: true }); d.pipe([[504, 500], [472, 500]], 'crude', { noArrow: true }); d.pipe([[440, 500], [408, 500]], 'crude', { noArrow: true });
+    d.pipe([[568, 580], [472, 580]], 'crude', { noArrow: true });
+    d.pipe([[376, 500], [340, 500], [340, 540], [300, 540]], 'crude', { noArrow: true }); d.pipe([[440, 580], [340, 580], [340, 540]], 'crude', { noArrow: true });
+    d.tag(700, 604, 'TDIC-015', 118);
+    d.ind(150, 520, 'TI hot train out', S => S.p.Thot, '°C', 1, 130);
+    d.pipe([[300, 540], [140, 540], [140, 600], [120, 600]], 'crude');
+    d.link(14, 600, 'TO H-1101', 'heater.html#TIC-066', 'l');
+    d.tag(150, 570, 'FIC-069');
+    d.ind(300, 610, 'Hot train duty', S => S.p.Qhot, 'MW', 1, 112);
+    d.ind(420, 610, 'Cold train duty', S => S.p.Qcold, 'MW', 1, 112);
+    // hot-side sources
+    d.link(840, 520, 'RESIDUE / PAs FROM T-1101', 'fract.html#LIC-007');
+    d.dyn(842, 552, S => 'residue ' + fx(S.p.FresProd, 0) + ' t/h at ' + fx(S.p.Tbot, 0) + ' °C → ' + fx(S.p.TresB, 0) + ' °C', 'lbl s');
+    d.dyn(842, 566, S => 'kero PA ' + fx(S.p.QkPA, 1) + ' MW · LGO PA ' + fx(S.p.QlPA, 1) + ' MW · HGO PA ' + fx(S.p.QhPA, 1) + ' MW', 'lbl s');
+    d.dyn(842, 580, S => 'desalter pressure ' + fx(S.p.Pd, 2) + ' kg/cm²g · charge from tankage ' + fx(S.p.Fin, 0) + ' t/h', 'lbl s');
+    d.ind(842, 596, 'UX-001 desalter protection', S => S.sis.cut.ux001 ? 'TRIPPED' : 'normal', '', 0, 160, 'UX-001');
+    d.ind(1010, 596, 'UX-007 ESD', S => S.sis.esd ? 'ACTIVE' : 'normal', '', 0, 110, 'UX-007');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — 500 Product Rundown & Dryers</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="rundown">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+const spec = (pr) => (S) => S.p.F < 100 ? '—' : (S.p.ok && S.p.ok[pr] ? 'ON-SPEC' : 'OFF-SPEC');
+const route = (d, x, y, k) => d.sel(x, y, 'route ' + CDU.ROUTES[k][0], ['SLOPS', 'PRODUCT'], S => S.route[k], v => CDU.cmd({ type: 'route', k, v }));
+UI.page({
+  defaultTag: 'FQIC-020',
+  side: ['kpi', 'trend:prod', 'trend:quality'],
+  draw(d) {
+    d.label(20, 26, 'AREA 500 — PRODUCT RUNDOWN, LGO / HGO DRYERS, VACUUM PACKAGE A-1102, RESIDUE COOLING', 'lbl big');
+    // ---- LGO: T-1103 → LV-019 → dryer T-1105 → P-1112 → E-1116 → FQIC-020
+    d.link(14, 90, 'FROM T-1103', 'fract.html#LIC-013', 'l');
+    d.pipe([[124, 90], [250, 90]], 'hc'); d.valve(190, 90, 'LIC-019');
+    d.rect(252, 62, 40, 110, 'eq', 14); d.level(256, 70, 32, 94, S => S.p.Ld1); d.label(272, 186, 'T-1105 LGO dryer', 'lbl s', 'middle');
+    d.psv(310, 50, 'PSV-021', 'r');
+    d.pipe([[272, 62], [272, 44], [420, 44], [420, 230]], 'gas', { noArrow: true });
+    d.pipe([[272, 172], [272, 196], [330, 196]], 'hc', { noArrow: true });
+    d.motor(346, 196, 'P1112', 'pump', ''); d.label(346, 224, 'P-1112', 'lbl s', 'middle');
+    d.pipe([[360, 196], [380, 196], [380, 110], [520, 110]], 'hc', { noArrow: true });
+    d.hx(540, 110, ''); d.label(540, 90, 'E-1116 air', 'lbl s', 'middle');
+    d.pipe([[556, 110], [760, 110]], 'hc'); d.valve(620, 110, 'FQIC-020');
+    d.link(760, 110, 'LGO → LCO HDT / TK-5115', 'quality.html#LAB');
+    d.tag(20, 112, 'LIC-019', 104); d.tag(580, 140, 'FQIC-020', 112);
+    d.ind(700, 140, 'LGO rundown T', S => S.p.Tlgo, '°C', 1, 96);
+    d.ind(700, 178, 'LGO quality', spec('LGO'), '', 0, 96, 'LAB');
+    route(d, 940, 104, 'LGO');
+    // ---- HGO: T-1104 → LV-022 → dryer T-1106 → P-1113 → E-1117/1119 → FQIC-024
+    d.link(14, 290, 'FROM T-1104', 'fract.html#LIC-016', 'l');
+    d.pipe([[124, 290], [250, 290]], 'hc'); d.valve(190, 290, 'LIC-022');
+    d.rect(252, 262, 40, 110, 'eq', 14); d.level(256, 270, 32, 94, S => S.p.Ld2); d.label(272, 386, 'T-1106 HGO dryer', 'lbl s', 'middle');
+    d.psv(310, 250, 'PSV-106', 'r');
+    d.pipe([[272, 262], [272, 244], [420, 244], [420, 230]], 'gas', { noArrow: true });
+    d.pipe([[272, 372], [272, 396], [330, 396]], 'hc', { noArrow: true });
+    d.motor(346, 396, 'P1113', 'pump', ''); d.label(346, 424, 'P-1113', 'lbl s', 'middle');
+    d.pipe([[360, 396], [380, 396], [380, 320], [520, 320]], 'hc', { noArrow: true });
+    d.hx(540, 320, ''); d.label(540, 300, 'E-1117 / E-1119', 'lbl s', 'middle');
+    d.pipe([[556, 320], [760, 320]], 'hc'); d.valve(620, 320, 'FQIC-024');
+    d.link(760, 320, 'HGO → LCO HDT / TK-5109', 'quality.html#LAB');
+    d.tag(20, 312, 'LIC-022', 104); d.tag(580, 350, 'FQIC-024', 112);
+    d.ind(700, 350, 'HGO rundown T', S => S.p.Thgo, '°C', 1, 96);
+    d.ind(700, 388, 'HGO quality', spec('HGO'), '', 0, 96, 'LAB');
+    route(d, 940, 314, 'HGO');
+    // ---- vacuum package
+    d.rect(420, 196, 130, 70, 'eq2', 4); d.label(485, 214, 'A-1102 ejectors', 'lbl s', 'middle'); d.label(485, 228, '+ D-1106 / D-1107', 'lbl s', 'middle');
+    d.motor(450, 248, 'EJ', 'sw', ''); d.label(470, 258, 'MP steam', 'lbl s');
+    d.pipe([[550, 230], [600, 230]], 'gas', { noArrow: true }); d.label(604, 226, 'off gas → H-1101 burners', 'lbl s'); d.label(604, 240, 'condensate → SWS', 'lbl s');
+    d.tag(20, 200, 'PIC-049', 104);
+    d.ind(140, 200, 'Dryer pressure', S => S.p.Pdry, 'kg/cm²g', 3, 104, 'PIC-049');
+    d.ind(140, 238, 'LGO water', S => S.p.ppmW, 'ppm', 0, 104, 'LAB');
+    d.ind(600, 248, 'MP steam header', S => S.p.mpP, 'kg/cm²g', 1, 120, 'PI-MPS');
+    // ---- kerosene
+    d.link(14, 440, 'KERO FROM P-1107', 'fract.html#FQIC-033', 'l');
+    d.pipe([[160, 440], [430, 440]], 'hc', { noArrow: true });
+    d.hx(300, 440, ''); d.label(300, 420, 'E-1114 air', 'lbl s', 'middle');
+    d.hx(380, 440, ''); d.label(380, 420, 'E-1115 water', 'lbl s', 'middle');
+    d.pipe([[396, 440], [760, 440]], 'hc');
+    d.link(760, 440, 'KERO → KTU (unit 014)', 'quality.html#LAB');
+    d.ind(460, 452, 'Kero flow', S => S.p.Fkero, 't/h', 1, 96); d.ind(560, 452, 'Kero rundown T', S => S.p.Tkero, '°C', 1, 104); d.ind(670, 452, 'Kero quality', spec('KERO'), '', 0, 86, 'LAB');
+    route(d, 940, 434, 'KERO');
+    // ---- naphtha
+    d.link(14, 504, 'NAPHTHA FROM T-1107', 'overhead.html#LIC-042', 'l');
+    d.pipe([[180, 504], [430, 504]], 'hc', { noArrow: true });
+    d.hx(300, 504, ''); d.label(300, 530, 'E-1126 air', 'lbl s', 'middle');
+    d.hx(380, 504, ''); d.label(380, 530, 'E-1127 water', 'lbl s', 'middle');
+    d.pipe([[396, 504], [760, 504]], 'hc');
+    d.link(760, 504, 'NAPHTHA → NHT (012) / STORAGE', 'quality.html#LAB');
+    d.ind(460, 516, 'Naphtha NHT / sto', S => fx(S.p.Fnap, 1) + ' / ' + fx(S.p.FnapSto, 1), 't/h', 1, 120); d.ind(590, 516, 'Naphtha quality', spec('NAP'), '', 0, 96, 'LAB');
+    route(d, 940, 498, 'NAP');
+    // ---- residue
+    d.link(14, 572, 'RESIDUE FROM E-1101', 'preheat.html#TDIC-007', 'l');
+    d.pipe([[170, 572], [760, 572]], 'res');
+    d.link(760, 572, 'RESIDUE → RFCC (hot)', 'quality.html#LAB');
+    d.pipe([[230, 572], [230, 616], [560, 616]], 'res');
+    d.hx(320, 616, ''); d.label(320, 596, 'E-1120 A-D', 'lbl s', 'middle');
+    d.valve(260, 616, 'TIC-111', false, 'TV-111');
+    d.link(560, 616, 'RESIDUE → TK-5103', 'quality.html#LAB');
+    d.motor(420, 616, 'P1122', 'pump', ''); d.label(420, 646, 'P-1122 TW / E-1133', 'lbl s', 'middle');
+    d.tag(20, 596, 'TIC-111', 104);
+    route(d, 940, 556, 'RES');
+    d.ind(700, 604, 'To RFCC', S => S.p.toRFCC, 't/h', 0, 96, 'FV-026'); d.ind(800, 604, 'To storage', S => S.p.toSto, 't/h', 0, 96);
+    d.ind(900, 604, 'Residue to tank T', S => S.p.TresSto, '°C', 1, 110, 'TIC-111');
+    d.ind(1014, 604, 'Residue quality', spec('RES'), '', 0, 104, 'LAB');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — 300 Main Fractionator T-1101</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="fract">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+const ty = (n) => 70 + (n - 1) * 10.6;     // tray n elevation on the graphic
+UI.page({
+  defaultTag: 'TIC-076',
+  side: ['kpi', 'trend:top', 'trend:cuts'],
+  draw(d) {
+    d.label(20, 26, 'AREA 300 — MAIN FRACTIONATOR T-1101 (48 trays) AND SIDE STRIPPERS', 'lbl big');
+    // ---- column
+    d.column(470, 56, 60, 548, '', [[(ty(4) - 56) / 548, ''], [(ty(12) - 56) / 548, ''], [(ty(15) - 56) / 548, ''], [(ty(23) - 56) / 548, ''], [(ty(26) - 56) / 548, ''], [(ty(35) - 56) / 548, ''], [(ty(38) - 56) / 548, ''], [(ty(42) - 56) / 548, ''], [(ty(43) - 56) / 548, '']]);
+    d.level(474, 560, 52, 40, S => S.p.Lbot);
+    d.label(464, 616, 'T-1101', 'lbl', 'end');
+    [[1, 'tray 1'], [4, '4'], [12, '12'], [15, '15'], [23, '23'], [26, '26'], [35, '35'], [38, '38'], [42, '42']].forEach(([n, t]) => d.label(500, ty(n) + 4, t, 'lbl s', 'middle'));
+    d.label(500, 517, 'flash', 'lbl s', 'middle');
+    // ---- overhead vapour
+    d.pipe([[500, 56], [500, 40], [1000, 40]], 'gas');
+    d.link(1000, 40, 'TO E-1111 / D-1103', 'overhead.html#PIC-064');
+    d.pipe([[640, 40], [640, 24]], 'flare', { noArrow: true }); d.psv(640, 12, 'PSV-161', 'r');
+    // ---- pumparounds (left side): draw → pump → duty valve → cooler / preheat → return
+    const pa = (draw, ret, pump, tag, vlabel, exch, link, href, y0) => {
+      d.pipe([[470, ty(draw)], [430, ty(draw)]], 'hc', { noArrow: true });
+      d.motor(414, ty(draw), pump, 'pump', '');
+      d.pipe([[400, ty(draw)], [330, ty(draw)]], 'hc', { noArrow: true });
+      d.valve(350, ty(draw), tag, false, vlabel);
+      d.pipe([[330, ty(draw)], [300, ty(draw)], [300, ty(ret)], [470, ty(ret)]], 'hc');
+      if (exch) d.hx(300, (ty(draw) + ty(ret)) / 2, '');
+      if (link) d.link(160, (ty(draw) + ty(ret)) / 2, link, href, 'l');
+    };
+    pa(4, 1, 'P1102', 'TIC-076', 'UV-079/080', false);
+    d.motor(268, (ty(4) + ty(1)) / 2, 'E1112', 'fan', ''); d.label(250, ty(1) - 4, 'E-1112', 'lbl s', 'end');
+    d.label(414, ty(4) + 26, 'P-1102', 'lbl s', 'middle');
+    d.tag(20, 44, 'TIC-076');
+    d.ind(20, 94, 'Top PA duty', S => S.p.Qtpa, 'MW', 1, 104);
+    pa(15, 12, 'P1103', 'UIC-029', 'UV-083/084', true, 'E-1102 cold train', 'preheat.html#TDIC-007');
+    d.label(414, ty(15) + 26, 'P-1103', 'lbl s', 'middle');
+    d.tag(20, 210, 'UIC-029');
+    pa(26, 23, 'P1104', 'UIC-032', 'UV-087/088', true, 'E-1106 hot train', 'preheat.html#TDIC-015');
+    d.label(414, ty(26) + 26, 'P-1104', 'lbl s', 'middle');
+    d.tag(20, 328, 'UIC-032');
+    pa(38, 35, 'P1105', 'UIC-031', 'UV-085/086', true, 'E-1109 / E-1110', 'preheat.html#TDIC-015');
+    d.label(414, ty(38) + 26, 'P-1105', 'lbl s', 'middle');
+    d.tag(20, 452, 'UIC-031');
+    // ---- feed from heater and bottom stripping steam
+    d.link(160, 510, 'FROM H-1101', 'heater.html#TIC-066', 'l');
+    d.pipe([[270, 510], [470, 510]], 'crude');
+    d.ind(290, 528, 'TI flash zone', S => S.p.Tfz, '°C', 1, 110);
+    d.link(160, 586, 'LP STEAM (superheated)', 'heater.html#TI-SH', 'l');
+    d.pipe([[330, 586], [470, 586]], 'steam');
+    d.valve(400, 586, 'FIC-051');
+    d.tag(20, 540, 'FIC-051');
+    // ---- side strippers (right)
+    const strip = (draw, ret, x, y, h, nm, ltag, lab) => {
+      d.pipe([[530, ty(draw)], [600, ty(draw)], [600, y + 10], [x, y + 10]], 'hc');
+      d.valve(575, ty(draw), ltag, false);
+      d.pipe([[x + 20, y], [x + 20, y - 10], [560, y - 10], [560, ty(ret)], [530, ty(ret)]], 'gas');
+      d.rect(x, y, 40, h, 'eq', 12); d.level(x + 4, y + 8, 32, h - 16, S => S.p[lab]);
+      d.label(x + 44, y + 8, nm, 'lbl s');
+    };
+    strip(15, 12, 620, 196, 80, 'T-1102 kero', 'LIC-011', 'Lk');
+    strip(26, 23, 620, 312, 80, 'T-1103 LGO', 'LIC-013', 'Ll');
+    strip(38, 35, 620, 430, 80, 'T-1104 HGO', 'LIC-016', 'Lh');
+    d.tag(672, 110, 'LIC-011', 104); d.tag(780, 110, 'UIC-033', 104);
+    d.hx(700, 250, ''); d.label(718, 254, 'E-1110 reboiler (HGO PA)', 'lbl s');
+    d.pipe([[686, 250], [660, 250]], 'hc', { noArrow: true });
+    // kero product
+    d.pipe([[640, 276], [640, 290], [700, 290]], 'hc', { noArrow: true });
+    d.motor(716, 290, 'P1107', 'pump', '');
+    d.label(716, 318, 'P-1107', 'lbl s', 'middle');
+    d.pipe([[730, 290], [850, 290]], 'hc');
+    d.valve(780, 290, 'FQIC-033');
+    d.link(850, 290, 'KERO → KTU', 'rundown.html#FQIC-033');
+    d.tag(800, 192, 'FQIC-033', 104);
+    // LGO stripper steam + bottoms to dryer
+    d.tag(672, 330, 'LIC-013', 104); d.tag(780, 330, 'FIC-052', 104);
+    d.pipe([[760, 382], [660, 382]], 'steam'); d.valve(720, 382, 'FIC-052');
+    d.pipe([[640, 392], [640, 404], [850, 404]], 'hc');
+    d.link(850, 404, 'LGO → DRYER T-1105', 'rundown.html#LIC-019');
+    // HGO stripper steam + bottoms to dryer
+    d.tag(672, 446, 'LIC-016', 104); d.tag(780, 446, 'FIC-053', 104);
+    d.pipe([[760, 500], [660, 500]], 'steam'); d.valve(720, 500, 'FIC-053');
+    d.pipe([[640, 510], [640, 524], [850, 524]], 'hc');
+    d.link(850, 524, 'HGO → DRYER T-1106', 'rundown.html#LIC-022');
+    // ---- bottoms / residue
+    d.pipe([[500, 604], [500, 622], [570, 622]], 'res', { noArrow: true });
+    d.motor(586, 622, 'P1106', 'pump', '');
+    d.label(612, 612, 'P-1106 A/B', 'lbl s');
+    d.pipe([[600, 622], [850, 622]], 'res');
+    d.valve(700, 622, 'LIC-007', false, 'FV-026 RFCC', S => Math.min(100, S.ctl['LIC-007'].op * 2));
+    d.valve(790, 622, 'LIC-007', false, 'FV-027 sto.', S => Math.max(0, S.ctl['LIC-007'].op * 2 - 100));
+    d.link(850, 622, 'RESIDUE → PREHEAT', 'preheat.html#TDIC-015');
+    d.tag(540, 548, 'LIC-007', 112);
+    // ---- column indicators (right)
+    const col = 960;
+    d.ind(col, 60, 'TI top T-1101', S => S.p.Ttop, '°C', 1, 110);
+    d.ind(col + 116, 60, 'PI top', S => S.p.Ptop, 'kg/cm²g', 2, 110, 'PI-TOP');
+    d.ind(col, 98, 'Water dew point', S => S.p.Tdew, '°C', 1, 110, 'TIC-076');
+    d.ind(col + 116, 98, 'Dew margin', S => S.p.dewM > 90 ? '—' : fx(S.p.dewM, 1), '°C', 1, 110, 'TIC-076');
+    d.ind(col, 136, 'TI tray 15 kero', S => S.p.Tk, '°C', 1, 110);
+    d.ind(col + 116, 136, 'TI tray 26 LGO', S => S.p.Tl, '°C', 1, 110);
+    d.ind(col, 174, 'TI tray 38 HGO', S => S.p.Th, '°C', 1, 110);
+    d.ind(col + 116, 174, 'TI bottoms', S => S.p.Tbot, '°C', 1, 110);
+    d.ind(col, 212, 'Vapour at flash', S => S.p.yv * 100, '% wt', 1, 110);
+    d.ind(col + 116, 212, 'Overflash', S => S.p.OF, '% feed', 2, 110, 'FI-OF');
+    d.label(col, 268, 'EFFECTIVE TBP CUT POINTS (°C)', 'lbl s');
+    d.ind(col, 276, 'naphtha / kero', S => S.p.cutNK, '°C', 0, 110);
+    d.ind(col + 116, 276, 'kero / LGO', S => S.p.cutKL, '°C', 0, 110);
+    d.ind(col, 314, 'LGO / HGO', S => S.p.cutLH, '°C', 0, 110);
+    d.ind(col + 116, 314, 'HGO / residue', S => S.p.cutHR, '°C', 0, 110);
+    d.label(col, 370, 'INTERNAL REFLUX (× design)', 'lbl s');
+    d.ind(col, 378, 'trays 4-15', S => S.p.r1, '', 2, 72); d.ind(col + 78, 378, '15-26', S => S.p.r2, '', 2, 72); d.ind(col + 156, 378, '26-38', S => S.p.r3, '', 2, 70);
+    d.ind(col, 430, 'Kero draw', S => S.p.dK, 't/h', 1, 110); d.ind(col + 116, 430, 'LGO draw', S => S.p.dL, 't/h', 1, 110);
+    d.ind(col, 468, 'HGO draw', S => S.p.dH, 't/h', 1, 110); d.ind(col + 116, 468, 'Strip steam', S => S.p.St1 + S.p.St2 + S.p.St3, 't/h', 1, 110);
+    d.ind(col, 560, 'To RFCC FV-026', S => S.p.toRFCC, 't/h', 0, 110, 'FV-026'); d.ind(col + 116, 560, 'To storage FV-027', S => S.p.toSto, 't/h', 0, 110);
+  }
+});
+</script>
+</body>
+</html>

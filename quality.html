@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — Quality / Products</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>.tbp{width:100%;height:260px;display:block;background:#eceded;border:1px solid var(--line)}</style>
+</head>
+<body data-page="quality">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx;
+let pick = null;
+const specTxt = (r) => !r ? '' : r[0] <= -900 ? '≤ ' + r[1] : r[1] >= 900 ? '≥ ' + r[0] : r[0] + ' – ' + r[1];
+UI.page({
+  graphic: false, side: ['kpi', 'trend:quality', 'trend:cuts'],
+  body(view) {
+    // ---- product specification status
+    const sc = UI.card('Product quality — lab (sample point lag ~10 min) vs specification of the target case', '');
+    const st = UI.h('table', { class: 't' }); sc.querySelector('.bd').append(st);
+    UI.bind(st, (S) => {
+      const g = CDU.GRADES[S.target];
+      let html = '<tr><th class="l">Product</th><th class="l">Property</th><th>Instant.</th><th>Lab</th><th>Spec</th><th>Status</th><th class="l">Route</th></tr>';
+      const rmap = { LPG: 'NAP', NAP: 'NAP', KERO: 'KERO', LGO: 'LGO', HGO: 'HGO', RES: 'RES' };
+      for (const pr in CDU.PRODUCTS) {
+        const keys = Object.keys(CDU.PROPS).filter(k => CDU.PROPS[k].prod === pr);
+        keys.forEach((k, i) => {
+          const P = CDU.PROPS[k], r = g.spec[k], v = S.p.lab[k], bad = r && v != null && (v < r[0] || v > r[1]);
+          html += `<tr><td class="l">${i === 0 ? '<b>' + CDU.PRODUCTS[pr] + '</b>' : ''}</td><td class="l">${P.label}${P.unit ? ' (' + P.unit + ')' : ''}</td><td>${fx(S.p.inst[k], P.dec)}</td><td class="${bad ? 'bad' : r ? 'okc' : ''}">${fx(v, P.dec)}</td><td>${specTxt(r)}${P.jet && !g.jet ? '<span class="hint"> (Jet A-1: ≤ −47, BLEND case)</span>' : ''}</td>` +
+            `<td>${i === 0 ? (S.p.F < 100 ? '—' : S.p.ok[pr] ? '<b style="color:var(--ok)">ON-SPEC</b>' : '<b style="color:var(--p1)">OFF-SPEC</b>') : ''}</td><td class="l">${i === 0 ? (S.route[rmap[pr]] === 'SLOPS' ? 'SLOPS' : CDU.ROUTES[rmap[pr]][1]) : ''}</td></tr>`;
+        });
+      }
+      html += `<tr><td class="l"><b>Desalted crude</b></td><td class="l">Salt / BS&W</td><td></td><td class="${S.p.salt > 2 || S.p.bsw > 0.2 ? 'bad' : 'okc'}">${fx(S.p.salt, 2)} ppm / ${fx(S.p.bsw, 2)} %</td><td>≤ 2 ppm / ≤ 0.2 %</td><td></td><td></td></tr>`;
+      st.innerHTML = html;
+    });
+    view.append(sc);
+
+    // ---- recipe vs current SP
+    const rc = UI.card('Target-case recipe vs current setpoints', '');
+    const bd = rc.querySelector('.bd');
+    const sel = UI.h('select'); for (const g in CDU.GRADES) sel.append(UI.h('option', { value: g }, g + ' — ' + CDU.GRADES[g].desc));
+    sel.addEventListener('change', () => pick = sel.value);
+    const bT = UI.h('button', { on: { click: () => CDU.cmd({ type: 'target', grade: sel.value }) } }, 'Set as target');
+    const bA = UI.h('button', { class: 'warn', on: { click: () => CDU.cmd({ type: 'recipe', grade: sel.value }) } }, 'Apply recipe SPs');
+    const row = UI.h('div', { class: 'tabs' }); row.append(sel, bT, bA);
+    const tb = UI.h('table', { class: 't', style: 'margin-top:6px' });
+    bd.append(row, tb, UI.h('div', { class: 'hint' }, 'The recipe solver works from the crude TBP curve: top temperature for the naphtha/kero cut, product draws for the side cuts, COT for 2.5 % overflash, stripping steam in proportion to the product. Highlighted rows differ from the current SP. Click a row to open the tag. Pumparound duties, levels and pressures stay at their normal SPs (manual §6).'));
+    const hardNote = UI.h('div', { class: 'note', style: 'margin-top:6px;border-left:4px solid var(--p2);background:#f4ecd2;padding:6px 10px' },
+      '<b>HARD mode:</b> recipe values are hidden. Work out each setpoint from the manual (recipe tables in §6) and enter it on the faceplate.');
+    bd.append(hardNote);
+    UI.bind(tb, (S) => {
+      if (!pick) pick = S.target; if (document.activeElement !== sel) sel.value = pick;
+      const g = pick, hard = S.level === 'hard';
+      bA.style.display = hard ? 'none' : ''; hardNote.style.display = hard ? '' : 'none';
+      rc.querySelector('h3').firstChild.textContent = hard ? 'Current setpoints (target case ' + S.target + ')' : 'Target-case recipe vs current setpoints';
+      tb.innerHTML = '<tr><th class="l">Item</th>' + (hard ? '' : '<th>Recipe</th>') + '<th>Current</th><th class="l">Unit</th></tr>' + CDU.recipeItems(g).map(([lab, key, val, u]) => {
+        const cur = CDU.currentValue(S, key), same = CDU.sameVal(cur, val), dec = Math.abs(val) < 10 ? 2 : 1;
+        return `<tr class="clk" data-tag="${key}"><td class="l">${lab}</td>` + (hard ? '' : `<td>${fx(val, dec)}</td>`) + `<td class="${same || hard ? '' : 'diff'}">${fx(cur, dec)}</td><td class="l">${u}</td></tr>`; }).join('');
+    });
+    tb.addEventListener('click', (e) => { const r = e.target.closest('tr[data-tag]'); if (r && r.dataset.tag) UI.go(r.dataset.tag); });
+    view.append(rc);
+
+    // ---- case library + TBP curves
+    const gl = UI.card('Operating cases & crude TBP curves');
+    const gt = UI.h('table', { class: 't' });
+    let html = '<tr><th class="l">Case</th><th class="l">Description</th><th>Bach Ho %</th><th>TBP cuts °C</th><th>Naphtha</th><th>Kero</th><th>LGO</th><th>HGO</th><th>Residue</th><th>COT</th><th>Top</th></tr>';
+    for (const k in CDU.GRADES) { const g = CDU.GRADES[k], r = CDU.solveRecipe(k);
+      html += `<tr><td class="l"><b>${k}</b></td><td class="l" style="white-space:normal">${g.desc}</td><td>${g.bh}</td><td>${g.cuts.join(' / ')}</td><td>${fx(r.nap, 0)}</td><td>${fx(r.kero, 0)}</td><td>${fx(r.lgo, 0)}</td><td>${fx(r.hgo, 0)}</td><td>${fx(r.res, 0)}</td><td>${fx(r.COT, 1)}</td><td>${fx(r.Ttop, 1)}</td></tr>`; }
+    gt.innerHTML = html + '<tr><td colspan="11" class="l hint">Product rates in t/h at 810 t/h dry crude. LPG: Bach Ho 2.2 t/h, Dubai 7.0 t/h.</td></tr>';
+    const cv = UI.h('canvas', { class: 'tbp', height: 260 });
+    gl.querySelector('.bd').append(gt, cv);
+    let drawn = false;
+    UI.bind(cv, (S) => {
+      const dpr = window.devicePixelRatio || 1, W = cv.clientWidth || 600, H = 260;
+      if (!drawn || cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); drawn = true; }
+      const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+      const X = (t) => 40 + (W - 60) * t / 100, Y = (T) => H - 24 - (H - 40) * (T + 50) / 650;
+      x.strokeStyle = '#cfd1d3'; x.font = '10px Segoe UI'; x.fillStyle = '#555';
+      for (let t = 0; t <= 100; t += 10) { x.beginPath(); x.moveTo(X(t), 10); x.lineTo(X(t), H - 24); x.stroke(); x.fillText(t + '%', X(t) - 8, H - 10); }
+      for (let T = 0; T <= 600; T += 100) { x.beginPath(); x.moveTo(40, Y(T)); x.lineTo(W - 20, Y(T)); x.stroke(); x.fillText(T + '°C', 4, Y(T) + 3); }
+      const curve = (xb, col, lab) => { x.strokeStyle = col; x.lineWidth = 2; x.beginPath(); for (let T = -40; T <= 600; T += 5) { const c = CDU.cum(xb, 1, T); T === -40 ? x.moveTo(X(c), Y(T)) : x.lineTo(X(c), Y(T)); } x.stroke(); x.fillStyle = col; x.fillText(lab, X(CDU.cum(xb, 1, 450)) + 6, Y(450)); };
+      curve(1, '#1f5fbf', 'Bach Ho'); curve(0, '#c0392b', 'Dubai'); curve(S.p.xCol, '#2e7d32', 'in column now');
+      x.fillStyle = '#333'; x.strokeStyle = '#8a6d3b'; x.setLineDash([4, 3]);
+      for (const [k, lab] of [['cutNK', 'N/K'], ['cutKL', 'K/L'], ['cutLH', 'L/H'], ['cutHR', 'H/R']]) { const T = S.p[k]; if (!T) continue; x.beginPath(); x.moveTo(40, Y(T)); x.lineTo(W - 20, Y(T)); x.stroke(); x.fillText(lab + ' ' + fx(T, 0), W - 70, Y(T) - 3); }
+      x.setLineDash([]); x.fillStyle = '#555'; x.fillText('TBP curve: cumulative wt % distilled (x) vs true boiling point (y); dashed = effective cut points now', 44, 20);
+    });
+    view.append(gl);
+
+    // ---- tonnage
+    const tc = UI.card('Production accounting this session (t)');
+    const tt = UI.h('table', { class: 't' }); tc.querySelector('.bd').append(tt);
+    UI.bind(tt, (S) => {
+      tt.innerHTML = '<tr><th class="l">Product</th><th>On-spec</th><th>Off-spec (to product tank!)</th><th>Slops (rerun)</th></tr>' + Object.keys(CDU.PRODUCTS).map(k => { const r = S.prodTons[k] || { on: 0, off: 0, slop: 0 };
+        return `<tr><td class="l">${CDU.PRODUCTS[k]}</td><td>${fx(r.on, 0)}</td><td class="${r.off > 1 ? 'bad' : ''}">${fx(r.off, 0)}</td><td>${fx(r.slop, 0)}</td></tr>`; }).join('') +
+        `<tr><td class="l"><b>Total</b></td><td><b>${fx(S.tons.on, 0)}</b></td><td><b>${fx(S.tons.off, 0)}</b></td><td><b>${fx(S.tons.slop, 0)}</b></td></tr>`;
+    });
+    view.append(tc);
+
+    // ---- lab results
+    const lab = UI.card('Quality lab — routine and spot samples', '');
+    const sp = UI.h('button', { on: { click: () => CDU.cmd({ type: 'spot' }) } }, 'Take spot samples');
+    const lt = UI.h('table', { class: 't', style: 'margin-top:6px' });
+    lab.querySelector('.bd').append(UI.h('div', { class: 'tabs' }), lt);
+    lab.querySelector('.tabs').append(sp, UI.h('span', { class: 'hint', style: 'align-self:center' }, 'Routine samples every 60 sim-min · results 15 min after sampling · red = out of spec for the case sampled'));
+    const keys = ['C5', 'C4N', 'KFL', 'FRZ', 'SMK', 'GNK', 'LFL', 'POUR', 'GKL', 'OLH', 'CCR', 'R360'];
+    UI.bind(lt, (S) => {
+      lt.innerHTML = '<tr><th>#</th><th>Sampled</th><th class="l">Type</th><th class="l">Case</th>' + keys.map(k => `<th>${CDU.PROPS[k].label.replace(/ \(.*\)/, '')}</th>`).join('') + '<th>Salt</th></tr>' +
+        (S.lab.length ? S.lab.map(s => {
+          const ready = S.t >= s.due, g = CDU.GRADES[s.grade];
+          return `<tr><td>${s.no}</td><td>${CDU.fmtT(s.t)}</td><td class="l">${s.kind}</td><td class="l">${s.grade}</td>` + keys.map(k => {
+            if (!ready) return '<td class="hint">pending</td>';
+            const v = s.props[k], r = g.spec[k], bad = r && v != null && (v < r[0] || v > r[1]);
+            return `<td class="${bad ? 'bad' : (r ? 'okc' : '')}">${fx(v, CDU.PROPS[k].dec)}</td>`; }).join('') +
+            `<td class="${ready && s.salt > 2 ? 'bad' : ''}">${ready ? fx(s.salt, 2) : '…'}</td></tr>`;
+        }).join('') : `<tr><td colspan="17" class="l hint">No samples yet — first routine sample at ${CDU.fmtT(S.nextSample)}.</td></tr>`);
+    });
+    view.append(lab);
+  }
+});
+</script>
+</body>
+</html>

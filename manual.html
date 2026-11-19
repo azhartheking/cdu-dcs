@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — Operator Manual</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  .man{background:var(--panel);border:1px solid var(--line);padding:18px 26px 30px;font-size:13px;line-height:1.55;max-width:1000px}
+  .man h1{font-size:22px;margin:0 0 4px;letter-spacing:.02em}
+  .man .sub{color:var(--mut);margin-bottom:14px}
+  .man h2{font-size:16px;margin:28px 0 8px;padding:4px 8px;background:#c3c5c7;border-left:4px solid #53575c;scroll-margin-top:90px}
+  .man h3{font-size:13.5px;margin:18px 0 6px}
+  .man p{margin:6px 0}
+  .man ol,.man ul{margin:6px 0 6px 0;padding-left:22px}
+  .man li{margin:2px 0}
+  .man table.t{margin:8px 0 10px;font-size:12px}
+  .man table.t td{white-space:normal}
+  .man table.t{font-weight:400}
+  .man code,.man .tg{font:600 12px Consolas,monospace;background:#eceded;border:1px solid #c3c5c7;padding:0 4px;border-radius:2px}
+  .man .note{border-left:4px solid var(--p2);background:#f4ecd2;padding:6px 10px;margin:8px 0}
+  .man .warn{border-left:4px solid var(--p1);background:#f5dcdb;padding:6px 10px;margin:8px 0}
+  .man .tip{border-left:4px solid #53575c;background:#e6e7e8;padding:6px 10px;margin:8px 0}
+  .man .flow{font:12px Consolas,monospace;background:#eceded;border:1px solid #c3c5c7;padding:8px 10px;white-space:pre;overflow:auto}
+  .toc a{display:block;padding:2px 0;text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .toc .l2{padding-left:12px;font-size:11.5px}
+  .print-toc{display:none}
+  /* ---- cover ---- */
+  .cover{border:1px solid #b9bcbf;background:linear-gradient(160deg,#f7f8fb 0%,#e9eef6 100%);padding:34px 36px 26px;margin:-18px -26px 18px;position:relative;overflow:hidden}
+  .cover .ed{display:inline-block;font:700 11px "Segoe UI";letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#2f6fb3;padding:4px 10px;border-radius:3px}
+  .cover h1{font-size:34px!important;line-height:1.1;margin:18px 0 6px!important;letter-spacing:.01em}
+  .cover .st{font-size:17px;color:#33373b;font-weight:600}
+  .cover .tl{font-size:14px;color:#4a4e53;max-width:640px;margin:14px 0 18px}
+  .cover .band{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:18px 0}
+  .cover .band div{color:#fff;font:600 11.5px "Segoe UI";padding:10px 8px;border-radius:3px;text-align:center}
+  .cover .who{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+  .cover .who div{background:#fff;border:1px solid #d3d6da;border-radius:4px;padding:10px 12px;font-size:12.5px}
+  .cover .who b{display:block;margin-bottom:3px;color:#2f6fb3}
+  .cover .by{margin-top:22px;font-size:13px;color:#4a4e53}
+  .cover .by span{display:block;font:700 24px "Segoe UI";color:#121416;letter-spacing:.02em}
+  .cover .fine{margin-top:18px;font-size:11px;color:#6b6f74;border-top:1px solid #c9cbcd;padding-top:8px}
+  .man svg.fig{width:100%;height:auto;display:block;background:#fff;border:1px solid #c3c5c7;margin:8px 0 2px}
+  .man .cap{font-size:11.5px;color:var(--mut);margin-bottom:10px}
+  .man .chk{list-style:none;padding-left:4px}
+  .man .chk li::before{content:"☐ ";font-size:14px}
+  .man .card2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+  .man .card2>div{border:1px solid #b9bcbf;background:#f4f5f6;padding:8px 12px;border-radius:3px;font-size:12px}
+  .man .card2 ol{margin:4px 0;padding-left:18px}
+  .man .ans{font-size:12px;color:#33373b;background:#eef3ea;border-left:4px solid var(--ok);padding:6px 10px}
+  .man svg,.cover,.cover *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:16mm 14mm 16mm 14mm}
+  @media print{
+    #hdr,#side,#banner,.disclaimer{display:none!important}
+    body{background:#fff;display:block;min-height:0}
+    #main{display:block;padding:0}
+    .man{border:none;max-width:none;padding:0;background:#fff;font-size:11pt}
+    .cover{margin:0;min-height:255mm;break-after:page;border:none;padding:22mm 16mm 12mm}
+    .man .card2,.man svg.fig{break-inside:avoid}
+    .man h2{break-before:page;background:#e3e4e5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .man h2#s1{break-before:page}
+    .man h3{break-after:avoid}
+    .man table.t,.man .flow,.man .note,.man .warn,.man .tip{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .man table.t th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .man a{color:inherit;text-decoration:none}
+    .man h3 a{display:none}
+    .man table.t td:first-child{white-space:nowrap}
+    .print-toc{display:block;break-before:page}
+    .print-toc h2{break-before:avoid!important}
+    .print-toc a{display:block;padding:3px 0;font-size:12pt;border-bottom:1px dotted #aaa}
+  }
+</style>
+</head>
+<body data-page="manual">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+
+<template id="manual">
+<div class="man">
+<div class="cover">
+<span class="ed">Student manual · edition 1.0</span>
+<h1>Crude Distillation Unit 11<br>DCS Training Simulator</h1>
+<div class="st">Atmospheric crude distillation — preheat, desalting, fired heater, main fractionator, side strippers, overhead and naphtha stabilizer</div>
+<div class="tl">Operator manual for the browser-based control-room simulator. It covers the process, the HMI, the control strategy, the recipe tables for every operating case, a complete start-up from cold, a controlled shutdown, the upset drills, the alarm and trip list and a self-test.</div>
+<div class="band"><div style="background:#5b6b7f">100 PREHEAT & DESALTING</div><div style="background:#8a5a3c">200 CRUDE HEATER</div><div style="background:#4f6d4f">300 MAIN FRACTIONATOR</div><div style="background:#6d4f7a">400 OVERHEAD & STABILIZER</div><div style="background:#3c6d7a">500 RUNDOWN & DRYERS</div></div>
+<div class="who"><div><b>For whom</b>Console operators, process engineers and students who want to practise CDU operation: normal control, crude switches, start-up, shutdown and upsets.</div><div><b>What you need</b>Microsoft Edge or Google Chrome. Open <code>Start CDU Simulator.bat</code>, the single-file version, or the installed app. No other software.</div></div>
+<div class="by">Unit 11 · 6.5 MTPA · Bach Ho and Dubai crude<span>CDU DCS Simulator</span></div>
+<div class="fine">Training model built from public training material and textbook theory. Values are training values, not design data — never use them to operate a real unit. Independent educational project; not affiliated with or endorsed by any refinery, licensor or equipment vendor.</div>
+</div>
+<div class="warn"><b>Safety note.</b> This is a training simulator. The process model is simplified (lumped balances and correlations). Real plants have their own operating manuals, interlocks and limits — always follow them.</div>
+
+<h2 id="s1">1. Introduction</h2>
+<p>The Crude Distillation Unit (CDU) is the first unit of the refinery. It separates desalted crude oil by boiling range into LPG, full-range naphtha, kerosene, light gas oil (LGO), heavy gas oil (HGO) and atmospheric residue. The simulated unit is a <b>6.5 million tonnes per year</b> atmospheric unit (≈ 810 t/h dry crude) designed for two crudes: <b>Bach Ho</b> (light, sweet, waxy, 39.2 API, 0.03 wt% S) and <b>Dubai</b> (medium, sour, 31.2 API, 2.1 wt% S). A blend of 84.6 wt% Bach Ho and 15.4 wt% Dubai is run when the kerosene must meet the Jet A-1 freeze point.</p>
+<svg class="fig" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI" font-size="11">
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10z" fill="#45494e"/></marker></defs>
+<g fill="#e4e5e6" stroke="#53575c"><rect x="10" y="90" width="90" height="40" rx="4"/><rect x="130" y="90" width="90" height="40" rx="4"/><rect x="250" y="90" width="90" height="40" rx="4"/><rect x="370" y="90" width="90" height="40" rx="4"/><rect x="500" y="20" width="60" height="190" rx="24"/><rect x="620" y="20" width="110" height="36" rx="4"/><rect x="760" y="20" width="110" height="36" rx="4"/><rect x="620" y="80" width="110" height="30" rx="4"/><rect x="620" y="120" width="110" height="30" rx="4"/><rect x="620" y="160" width="110" height="30" rx="4"/><rect x="620" y="196" width="110" height="26" rx="4"/></g>
+<g text-anchor="middle" fill="#121416"><text x="55" y="114">crude tanks</text><text x="175" y="108">cold preheat</text><text x="175" y="121">50 → 138 °C</text><text x="295" y="108">desalters</text><text x="295" y="121">2 stages</text><text x="415" y="104">hot preheat +</text><text x="415" y="117">H-1101 → 358 °C</text><text x="530" y="118">T-1101</text><text x="675" y="35">overhead D-1103</text><text x="675" y="48">124 °C top</text><text x="815" y="35">T-1107 stabilizer</text><text x="815" y="48">LPG + naphtha</text><text x="675" y="99">kerosene T-1102</text><text x="675" y="139">LGO T-1103/T-1105</text><text x="675" y="179">HGO T-1104/T-1106</text><text x="675" y="213">residue → RFCC</text></g>
+<g stroke="#45494e" stroke-width="2" fill="none" marker-end="url(#m)"><path d="M100,110 H128"/><path d="M220,110 H248"/><path d="M340,110 H368"/><path d="M460,110 H498"/><path d="M530,20 V12 H600 V38 H618"/><path d="M730,38 H758"/><path d="M560,95 H618"/><path d="M560,135 H618"/><path d="M560,175 H618"/><path d="M560,209 H618"/></g>
+</svg>
+<div class="cap">Figure 1 — Block flow of Unit 11 (simplified from the PFDs of the training module).</div>
+<h3>1.1 What the simulator does</h3>
+<ul>
+<li>Dynamic, training-grade model of the whole unit: preheat heat balance, desalting efficiency, fired-heater combustion and coil outlet temperature, flash-zone vaporisation from the crude TBP curve, top-section heat balance, side-draw cut points, stripping, overhead condensation and D-1103 pressure, stabilizer reboil/reflux, dryers, residue cooling, PSVs and flare.</li>
+<li>Product quality is calculated from the effective TBP cut points and the internal reflux of each column section: kero flash / freeze / smoke / density, LGO flash / pour / cetane, gaps and overlaps, residue boiling below 360 °C, LPG C5+ and naphtha C4.</li>
+<li>Five operating cases (§6), a full start-up from cold (§8), a controlled shutdown (§9) and 12 upset drills (§10). Every one of them was run and verified with the model before release (Appendix A).</li>
+</ul>
+
+<h2 id="s2">2. Getting started</h2>
+<ol>
+<li>Double-click <code>Start CDU Simulator.bat</code> (uses a small local web server if Python is installed, otherwise opens the files directly), or open <code>CDU DCS Simulator - single file.html</code>, or the installed app.</li>
+<li>The <b>Shift handover</b> menu opens. Choose the operating case, the difficulty, and the session: steady state, full start-up from cold, controlled shutdown, an upset drill or a crude-switch exercise. <b>Continue previous session</b> resumes the saved plant.</li>
+<li><b>EASY</b> shows recipe SP hints on every faceplate and a one-click <i>Apply recipe SPs</i> button. <b>HARD</b> hides them: every setpoint must come from this manual.</li>
+<li>Header: sim clock, FREEZE, speed 1× / 5× / 20× / 60×, alarm counters P1/P2/P3, ACK ALL, SILENCE, sound on/off, POP OUT, INSTALL APP (when served over http).</li>
+<li>All open tabs and windows share one plant. One tab (<b>SIM ●</b>) runs the model; the others (<b>SIM ○ follower</b>) send your commands to it. A tab with older code shows <b>⚠ OLD VERSION — press Ctrl+F5</b>.</li>
+</ol>
+<div class="tip">Use <b>POP OUT</b> to put the alarm list or a trend group on a second screen. Sound plays only in the window you clicked last.</div>
+
+<h2 id="s3">3. The DCS screens</h2>
+<p>The graphics follow ISA-101: grey background, grey equipment, and colour only for abnormal states (alarm colours, tripped motors, open PSVs, the fire in the heater). Click any tag box, valve, motor or PSV to open its <b>faceplate</b> in the right-hand panel (a bottom sheet on phones).</p>
+<table class="t"><tr><th class="l">Element</th><th class="l">Meaning</th></tr>
+<tr><td class="l">Tag box</td><td class="l">Controller: tag, PV, unit, SP, OP and mode (MAN shown in a white box). Border colour = highest active alarm (red P1, amber P2, magenta P3); a blinking square = unacknowledged.</td></tr>
+<tr><td class="l">Valve symbol</td><td class="l">Every control valve is tagged (FV/TV/PV/LV/UV/PDV/HY) and shows its opening in %. Split-range valves show each part separately.</td></tr>
+<tr><td class="l">Motor / pump</td><td class="l">Run lamp green = running, red = stopped, blinking red = tripped. The faceplate shows START/STOP and any missing <b>start permissive</b>.</td></tr>
+<tr><td class="l">Switch</td><td class="l">Two-state services (desalters in service, transformers, steam to coil, ejectors, chemicals, pilots, burners) use a switch symbol with the same lamp.</td></tr>
+<tr><td class="l">Selector</td><td class="l">HS-003 charge source (FLUSH / CRUDE), HS-100 heater suction (NORMAL / SHORT / LONG) and the product routing switches (SLOPS / PRODUCT).</td></tr>
+<tr><td class="l">PSV</td><td class="l">Live relief valves show their set pressure and turn red with the relief flow when open. Static devices are drawn for completeness.</td></tr>
+<tr><td class="l">Off-page link</td><td class="l">Arrow boxes jump to the matching tag on the other page.</td></tr></table>
+<h3>3.1 Tag prefixes</h3>
+<table class="t"><tr><th>Prefix</th><th class="l">Meaning</th><th>Prefix</th><th class="l">Meaning</th></tr>
+<tr><td>FIC / FQIC</td><td class="l">flow controller (Q = totalised)</td><td>TIC / TDIC</td><td class="l">temperature / temperature-difference controller</td></tr>
+<tr><td>PIC / PDIC</td><td class="l">pressure / differential-pressure controller</td><td>LIC</td><td class="l">level controller (interface for desalters / boots)</td></tr>
+<tr><td>UIC</td><td class="l">duty controller (MW = flow × ΔT × cp)</td><td>AIC</td><td class="l">analyser controller (flue-gas O2)</td></tr>
+<tr><td>HIC</td><td class="l">hand indicating controller (ratio station)</td><td>UX</td><td class="l">safety-instrumented trip logic</td></tr>
+<tr><td>FV/TV/PV/LV/UV</td><td class="l">final control element of the loop</td><td>PSV / TSV</td><td class="l">pressure / thermal relief valve</td></tr></table>
+<p>Tag numbers follow the control narrative of the Unit 11 training module with the unit prefix <code>011-</code> dropped. Loops marked <b>(a)</b> in the faceplate description use numbers assumed by the simulator where the source gives none (Appendix A.3).</p>
+<h3>3.2 The faceplate</h3>
+<p>PV / SP / OP bar graph, AUTO / MAN, <i>Set SP</i>, <i>Set OP</i> (MAN only), ▲▼ nudges (SP ±0.5 % of span in AUTO, OP ±1 % in MAN), range and action, final element, and in EASY mode the <b>Recipe SP</b> line with <i>Use recipe SP</i>. In MAN the SP tracks the PV, so MAN → AUTO is bumpless. Trip resets live on the faceplates of TIC-066 (heater), PIC-011 (UX-001) and TIC-060 (UX-024).</p>
+
+<h2 id="s4">4. Process description by area</h2>
+<h3>4.1 Area 100 — crude preheat and desalting</h3>
+<p>Crude from tankage is pumped by <b>P-6001 A/B/C</b>. The blend station <b>HIC-002</b> sets the Bach Ho / Dubai ratio at the tanks; a new blend takes about 20 min to arrive and another ~30 min to replace the column inventory. <b>PIC-011</b> holds the first-stage desalter at 12 kg/cm²g by throttling the charge valve FV-092; the total charge to the heater is set by <b>FIC-069</b> on the eight pass valves.</p>
+<p>The <b>cold train</b> (two parallel branches, balanced by <b>TDIC-007</b>) heats the crude from 50 to ≈ 138 °C against residue (E-1101), kerosene pumparound (E-1102), LGO product (E-1103) and HGO product (E-1104). A branch imbalance costs heat recovery — keep TDIC in AUTO at 0 °C.</p>
+<p><b>Desalting A-1101</b>: two electrostatic stages in series. Wash water (≈ 4 % of crude, <b>FIC-004</b>, P-1119 from D-1109, heated in E-1128) goes to the second stage; second-stage water is recycled by P-1118 (<b>LIC-006</b>) to the first stage; first-stage brine leaves on <b>LIC-003</b>. Mixing valves PDV-503/506 (<b>PDIC-503/506</b>, 1.2 kg/cm²) set the degree of emulsion. Salt removal efficiency depends on mixing ΔP (too low = poor contact, too high = tight emulsion and water carry-over), temperature (best 120–150 °C), wash rate, demulsifier, grid voltage (transformers) and interface level (high interface shorts the grids — the transformer trips at 90 %). Targets: salt ≤ 2 ppm wt, BS&W ≤ 0.2 vol%. Salt that passes the desalters hydrolyses to HCl and attacks the overhead.</p>
+<p>The <b>hot train</b> (branches balanced by <b>TDIC-015</b>) heats the desalted crude from the booster pumps P-1101 to ≈ 283 °C against residue (E-1134, E-1108, E-1105), LGO pumparound (E-1106), HGO pumparound (E-1109) and HGO product (E-1107).</p>
+<h3>4.2 Area 200 — crude charge heater H-1101</h3>
+<p>Two radiant cells, eight passes (four per cell), sixteen burners. Fuel gas is throttled by PV-120 from the coil outlet temperature controller <b>TIC-066</b> (358 °C Bach Ho, 363 °C Dubai). PV-120 has a mechanical minimum stop (3 % = one burner) while lit. Combustion air from FD fans <b>B-1101 A/B</b> is trimmed by <b>AIC-063</b> to 3 % O2: lower O2 makes CO and afterburning, higher O2 wastes fuel. LP steam is superheated in the convection section (SL-1101) and becomes the stripping steam — the coil must have steam flow before the burners are lit.</p>
+<p>Pass outlet and tube-skin temperatures are shown per pass. Skin temperature rises with heat flux and falls with pass flow; coke forms on the inner wall by an Arrhenius rate (doubling every ≈ 25 °C of skin). A pass with low flow overheats first.</p>
+<h3>4.3 Area 300 — main fractionator T-1101 and side strippers</h3>
+<p>48 trays; feed enters the flash zone between trays 42 and 43 at ≈ 352 °C and 1.86 kg/cm²g. About 52 wt% of the Bach Ho feed is vaporised. The vapour is fractionated upward; the liquid is stripped by 16 t/h of superheated steam (<b>FIC-051</b>) below the feed. Top 124 °C / 1.5 kg/cm²g, bottom 349 °C.</p>
+<ul>
+<li><b>Top pumparound</b> P-1102: tray 4 → air cooler E-1112 → tray 1. <b>TIC-076</b> controls the top temperature by the top PA duty. The top temperature sets the naphtha / kerosene cut (≈ +0.83 °C of TBP cut per °C of top temperature).</li>
+<li><b>Kerosene</b> drawn from tray 15 to stripper T-1102 (reboiled by E-1110 on HGO pumparound, <b>UIC-033</b>); product P-1107 on <b>FQIC-033</b>. Kero pumparound P-1103 (<b>UIC-029</b>, 9 MW) returns to tray 12 through E-1102.</li>
+<li><b>LGO</b> from tray 26 to T-1103 (steam <b>FIC-052</b>), then dryer T-1105 and P-1112 on <b>FQIC-020</b>. LGO pumparound P-1104 (<b>UIC-032</b>, 31 MW) returns to tray 23 through E-1106.</li>
+<li><b>HGO</b> from tray 38 to T-1104 (steam <b>FIC-053</b>), dryer T-1106, P-1113 on <b>FQIC-024</b>. HGO pumparound P-1105 (<b>UIC-031</b>) returns to tray 35 through E-1109.</li>
+<li><b>Stripper levels</b> LIC-011/013/016 move the draw valves from the column; <b>dryer levels</b> LIC-019/022 move the stripper bottoms. The product controllers therefore set how much is drawn — and so the cut points.</li>
+<li><b>Residue</b>: <b>LIC-007</b> split range sends the bottoms by P-1106 to the RFCC (FV-026, 0–50 %) and the rest to storage (FV-027, 50–100 %) through the preheat train and E-1120.</li>
+</ul>
+<div class="note"><b>The physics of the cut points.</b> Whatever is vaporised in the flash zone (set by COT and pressure) is the material available to the draws above it. Draws are taken top-down: more kerosene drawn moves the kero/LGO cut up and the LGO gets heavier at the front; the last one, HGO, gets what is left. The liquid that is vaporised but not drawn returns as <b>overflash</b> (≈ 2.5 % of feed): it washes the trays above the flash zone. Too little overflash = dirty, heavy HGO (high carbon residue) and coking of the wash trays. Pumparound duty below a section removes heat that would otherwise make internal reflux above it, so <b>more pumparound duty = better heat recovery but poorer fractionation</b> above that pumparound (smaller gaps, larger overlap).</div>
+<h3>4.4 Area 400 — overhead system and naphtha stabilizer</h3>
+<p>The overhead vapour (naphtha + LPG + stripping steam) gets neutralizer and corrosion inhibitor and is totally condensed in the air condenser <b>E-1111</b> (≈ 30 MW at design, 36 MW capacity) into D-1103 at 1.3 kg/cm²g and 50 °C. <b>PIC-064</b> uses a 3-way split range: fuel-gas make-up PV-064A (0–33 %), off gas to the RFCC PV-064B (33–67 %), flare PV-064C (67–100 %). If E-1111 cannot condense the load, vapour accumulates, PIC-064 vents to the flare, and if that is not enough the top pressure reaches the PSV-161 set pressure (3.5 kg/cm²g).</p>
+<p>Water separates in the boot (<b>LIC-040</b> → sour water to D-1106). Naphtha leaves on <b>LIC-038</b> → FV-032 (P-1110) through the feed/bottoms exchanger E-1118 to the stabilizer <b>T-1107</b> (32 trays, 7.9 kg/cm²g). The reboiler E-1121 uses desuperheated HP steam (<b>TIC-060</b>, 188 °C bottom); the overhead is condensed in E-1122 (cooling water) into D-1104 (<b>PIC-068</b> split range). Reflux returns on <b>LIC-047</b>; LPG product leaves on <b>FQIC-037</b>. Stabilized naphtha leaves on <b>LIC-042</b> to the NHT (FV-040) or to storage (LV-045).</p>
+<div class="note"><b>Water dew point.</b> The stripping steam leaves overhead with the naphtha. If the top temperature falls to within ~10 °C of the water dew point (≈ 108 °C at design), water condenses on the top trays together with HCl: very fast corrosion. Low top temperature (maximum kerosene), high steam rates and low top pressure all reduce the margin. The KPI <i>Dew-point margin</i> and alarm DEW watch it.</div>
+<h3>4.5 Area 500 — product rundown, dryers, residue cooling</h3>
+<p>LGO and HGO are dried under vacuum (−0.9 kg/cm²g) in T-1105 / T-1106; the vacuum comes from the steam ejector package A-1102 (MP steam) and is held by <b>PIC-049</b> (recycle PV-546). Lost vacuum = wet, hazy LGO (spec 200 ppm assumed). Kerosene is cooled in E-1114/E-1115 to 40 °C to the KTU; naphtha in E-1126/E-1127. Residue to storage is cooled in E-1120 with tempered water (P-1122, E-1133, <b>TIC-111</b> 85 °C) — residue above 95 °C into a tank with water bottoms can boil over. Each product has a <b>routing switch</b>: SLOPS (rerun) or PRODUCT. Off-spec product sent to the product tank counts as off-spec tonnes.</p>
+<h3>4.6 Area 900 — utilities and flare</h3>
+<p>Cooling water, LP (3.5), MP (10) and HP (40 kg/cm²g) steam, fuel gas (D-1114, 4.5 kg/cm²g), nitrogen and instrument air are shown as headers. The flare header collects the PSV reliefs and the pressure-control vents (PV-064C, PV-068C) through the knock-out drum D-901 to the stack FL-901; the flame grows with the load. Desalter PSVs relieve into T-1101, not to the flare.</p>
+
+<h2 id="s5">5. Control strategy</h2>
+<p>All loops are velocity-form PID with bumpless MAN↔AUTO (the SP tracks the PV in MAN) and the derivative on a filtered signal. Temperature loops (TIC-066, TIC-076, TIC-060) use <b>P and D on the PV, I on the error</b>, so an SP change does not kick the fuel or cooling valve.</p>
+<div data-gen="ctl"></div>
+<h3>5.1 Split ranges and special logic</h3>
+<ul><li><b>PIC-064</b> (D-1103): 0–33 % fuel-gas make-up, 33–67 % off gas to RFCC, 67–100 % to flare. Normal output ≈ 40 %.</li>
+<li><b>PIC-068</b> (D-1104): 0–33 % padding gas, 33–67 % RFCC, 67–100 % flare (the padding range is an assumption of the simulator).</li>
+<li><b>LIC-007</b>: 0–50 % FV-026 to RFCC (340 t/h max), 50–100 % FV-027 to storage. Normal output ≈ 58 %.</li>
+<li><b>LIC-042</b>: 0–50 % FV-040 to NHT, 50–100 % LV-045 to storage.</li>
+<li><b>TDIC-007 / TDIC-015</b> move the A and B branch valves in opposite directions.</li>
+<li><b>FQIC-037</b> has an equal-percentage valve (LPG flow differs by ×3 between the crudes).</li>
+<li>The cascades of the real unit (LIC-038 → FIC-032, LIC-047 → FIC-036, pass balancing FY-093) are simplified to direct level-to-valve loops.</li></ul>
+
+<h2 id="s6">6. Operating cases and recipe tables</h2>
+<p>A case fixes the crude and the four TBP cut points. The recipe solver turns them into setpoints: <b>TIC-076</b> for the naphtha/kero cut, <b>FQIC-033/020/024</b> for the side cuts, <b>TIC-066</b> for 2.5 % overflash, LGO/HGO stripping steam in proportion to the product, LPG product and wash water. In HARD mode use these tables.</p>
+<div data-gen="cases"></div>
+<div data-gen="recipes"></div>
+<h3>6.1 Normal setpoints common to all cases</h3>
+<div data-gen="normal"></div>
+<div class="tip">Pumparound duties and stripping steam are given at design charge (810 t/h). At reduced charge scale them with the charge (bottom steam not below 60 %).</div>
+
+<h2 id="s7">7. Normal operation</h2>
+<h3>7.1 What to watch every round</h3>
+<ul><li>Charge, COT, top temperature and the <b>dew-point margin</b> (≥ 10 °C).</li><li>Overflash 2–3 %; HGO stripper level steady (a falling HGO level = the draw tray is drying).</li><li>Desalted salt ≤ 2 ppm, interfaces 40–60 %, mixing ΔP 1.0–1.4.</li><li>Tube skin temperatures < 500 °C, pass flows equal, O2 2.5–3.5 %.</li><li>D-1103 pressure 1.3 and PIC-064 output 35–50 % (no flaring), stabilizer bottom 188 °C.</li><li>Lab: every product on spec for the target case; routes to PRODUCT.</li></ul>
+<h3>7.2 Quality handles</h3>
+<table class="t"><tr><th class="l">Symptom</th><th class="l">Cause</th><th class="l">Action</th></tr>
+<tr><td class="l">Kero flash low (< 40 °C)</td><td class="l">light ends in kero; kero reboiler duty low; top too cold</td><td class="l">raise UIC-033 (E-1110); check TIC-076; reduce kero PA duty if the gap is small</td></tr>
+<tr><td class="l">Gap kero/naphtha negative</td><td class="l">poor fractionation trays 4-15</td><td class="l">reduce kero or LGO pumparound duty (more internal reflux); raise COT slightly</td></tr>
+<tr><td class="l">Kero freeze too high (BLEND)</td><td class="l">kero end point too heavy; not enough Dubai</td><td class="l">reduce FQIC-033 a little; check HIC-002 = 84.6 %</td></tr>
+<tr><td class="l">LGO flash low</td><td class="l">stripping steam low (FIC-052)</td><td class="l">raise FIC-052 (≈ 30 kg/t of LGO)</td></tr>
+<tr><td class="l">LGO pour point high</td><td class="l">LGO too heavy (draw too high, HGO PA too high)</td><td class="l">reduce FQIC-020 / UIC-031</td></tr>
+<tr><td class="l">LGO/HGO overlap > 20 °C, HGO dirty</td><td class="l">overflash low; HGO PA duty high</td><td class="l">raise COT 2–3 °C or reduce HGO draw; reduce UIC-031</td></tr>
+<tr><td class="l">Residue < 360 °C too high</td><td class="l">bottom steam low; COT low; HGO draw too low</td><td class="l">restore FIC-051 16 t/h; raise COT; raise FQIC-024</td></tr>
+<tr><td class="l">LPG C5+ high</td><td class="l">LPG drawn too fast or reflux too low</td><td class="l">lower FQIC-037; check P-1114 and LIC-047</td></tr>
+<tr><td class="l">Naphtha C4 high</td><td class="l">reboiler too cold; LPG under-drawn</td><td class="l">raise TIC-060; raise FQIC-037</td></tr>
+<tr><td class="l">Desalted salt high</td><td class="l">transformer off, ΔP wrong, low wash, interface high</td><td class="l">restore XFMR, PDIC 1.2, FIC-004 4 %, LIC 50 %</td></tr></table>
+<h3>7.3 Crude switch (grade change)</h3>
+<p>Set the new target on the Quality page, then change HIC-002 and the recipe SPs. The blend arrives with a lag; change COT and the draws gradually as the TBP of the column feed moves (green curve on the Quality page). Route off-spec products to slops during the transition if they go out of spec, and back when the lab is on spec. Dubai: +5 °C COT, more naphtha and LPG (stabilizer reboil and reflux up), more salt.</p>
+
+<h2 id="s8">8. Full start-up from cold</h2>
+<p>Choose <i>Full unit start-up (cold)</i>. The unit is purged, inerted and empty at 25 °C with every machine stopped and every controller in MAN at 0 %. The step tracker ticks the steps in order. The sequence follows the start-up flowchart of the training module: charge flushing oil, short-path circulation, fire the heater, long-path circulation to warm the preheat train, raise to 270 °C, introduce crude, then commission the desalters, the side draws and the stabilizer, and ramp up.</p>
+<div data-gen="startup"></div>
+<div class="warn"><b>Traps in the start-up.</b>
+<ul><li><b>Stripping steam into a cold tower</b> (bottom < 150 °C) condenses: water slug, pressure surge, alarm WET. Wait for the bottom to be above 300 °C.</li>
+<li><b>Switching HS-100 to NORMAL before P-1101 runs</b> is refused — the heater would lose its suction and trip on low pass flow (243 t/h).</li>
+<li><b>Dead-heading P-6001</b>: with the booster stopped, the feed pump pressurises the desalters; PIC-011 must be in AUTO or PSV-005 lifts and UX-001 trips at 13.5 kg/cm²g.</li>
+<li><b>Crude into a column without E-1111</b>: the light ends of the crude go overhead at once; with no condenser they lift PSV-161. Start the fans and put PIC-064 in AUTO first.</li>
+<li><b>Burner light-off</b> needs FD fan running, 5 min purge, pilots lit, steam in the superheater coil, pass flow ≥ 250 t/h and TIC-066 in MAN at ≤ 10 %.</li>
+<li><b>Branch balancing</b>: leaving TDIC-007/015 in MAN at 0 % costs about a third of the preheat duty — the heater then runs hot and the O2 controller saturates.</li>
+<li><b>Stabilizer reflux pump</b> will not start on an empty D-1104 (< 8 %): start the reboiler first and wait for level.</li></ul></div>
+
+<h2 id="s9">9. Controlled shutdown</h2>
+<p>Choose <i>Controlled unit shutdown</i>. The order follows the shutdown flowchart of the training module: reduce rate, reduce firing, route products back to slops, shut the heater, stop steam, stop desalting, stop the stabilizer reboiler, hold pressure with fuel gas, cut the crude, stop the pumparounds and reflux, pump out, stop all machines.</p>
+<div data-gen="shutdown"></div>
+<div class="note">Stop the booster P-1101 <b>before</b> the feed pumps P-6001: stopping P-6001 first drops the desalter pressure while the booster still pulls and gives a UX-001 low-level trip. Stop P-1106 and P-1110 at ≈ 8 % level, before their low-low trips act (UX-020 / UX-022).</div>
+
+<h2 id="s10">10. Upset drills</h2>
+<p>Each drill starts from steady state on Bach Ho and fires its failure after the delay shown. Every drill was simulated twice: with <b>no response</b> (the protection acts — table column 3) and with the <b>correct response</b> (no trip).</p>
+<div data-gen="drills"></div>
+
+<h2 id="s11">11. Alarms, trips and relief devices</h2>
+<p>Priorities: <b>P1</b> (red) — immediate action, safety; <b>P2</b> (amber) — action within minutes; <b>P3</b> (magenta) — quality and advisory. State-based suppression hides alarms that only make sense in operation while the unit is down or starting up (charge < 600 t/h, circulation, COT < 330 °C).</p>
+<div data-gen="alarms"></div>
+<h3>11.1 Safety-instrumented trips</h3>
+<div data-gen="sis"></div>
+<h3>11.2 Pressure relief valves</h3>
+<div data-gen="psv"></div>
+<div class="tip">Every SIS trip, equipment trip and PSV lift opens a safety alert pop-up that says what happened and what to do. Closing it is shared by all windows; the horn continues until the alarm is acknowledged.</div>
+
+<h2 id="s12">12. Sounds</h2>
+<table class="t"><tr><th class="l">Sound</th><th class="l">When</th></tr><tr><td class="l">P1 warble every 1.4 s</td><td class="l">unacknowledged P1 alarm</td></tr><tr><td class="l">P2 double beep every 4 s</td><td class="l">unacknowledged P2 alarm</td></tr><tr><td class="l">P3 chime once</td><td class="l">new P3 alarm</td></tr><tr><td class="l">"kshhh" filtered noise</td><td class="l">a PSV is relieving (louder with flow)</td></tr><tr><td class="l">Flare roar (brown noise)</td><td class="l">flare load above 1 t/h, louder with load</td></tr></table>
+<p>SILENCE stops the horn for the standing alarms; a new alarm sounds again. Only the last-clicked window plays sound. Test every sound on the Instructor page.</p>
+
+<h2 id="s13">13. Quality control</h2>
+<p>Instantaneous properties are calculated each second; the <b>lab</b> values lag ≈ 10 min (sample point / tank). Routine samples are taken every hour (results after 15 min); spot samples on demand.</p>
+<div data-gen="specs"></div>
+<p>Correlations used: flash point ≈ 0.72 × D86 5 % − 79 (kero) or − 85 (gas oils); freeze point and pour point rise with the 95 % point; smoke point falls with the end point; residue below 360 °C falls with the HGO/residue cut and with bottom steam; LPG C5+ rises with the stabilizer top temperature and with over-drawing LPG; naphtha C4 falls with the reboiler temperature.</p>
+
+<h2 id="s14">14. Pocket cards and self-test</h2>
+<div class="card2">
+<div><b>Card 1 — normal targets (Bach Ho)</b><ol><li>Charge 810 t/h · COT 358 °C · top 123.6 °C</li><li>Desalter 12 kg/cm²g, 138 °C, salt ≤ 2 ppm</li><li>Overflash 2.5 % · dew margin ≥ 10 °C</li><li>D-1103 1.3 kg/cm²g · T-1107 bottom 188 °C</li><li>O2 3 % · skin < 500 °C</li></ol></div>
+<div><b>Card 2 — first actions on any upset</b><ol><li>ACK, read the alarm and the alert pop-up</li><li>Protect the heater: pass flow, COT</li><li>Protect pressures: PIC-011, PIC-064, PIC-068</li><li>Protect levels: T-1101 bottom, D-1103, D-1104</li><li>Off-spec products → SLOPS; then fix the cause</li></ol></div>
+<div><b>Card 3 — light-off permissives</b><ol><li>FD fan B-1101 running</li><li>Purge 300 s, fuel off</li><li>Pilots lit (pilot gas OK)</li><li>Steam through SL-1101</li><li>Pass flow ≥ 250 t/h · TIC-066 MAN ≤ 10 %</li></ol></div>
+<div><b>Card 4 — crude switch</b><ol><li>Set the target case</li><li>HIC-002 to the new ratio</li><li>Recipe SPs (COT, top, draws, steam, LPG)</li><li>Watch freeze / pour / C5 as the blend arrives</li><li>Off-spec to slops, back when on spec</li></ol></div>
+</div>
+<h3>14.1 Self-test</h3>
+<ol>
+<li>Why does raising the LGO pumparound duty make the kerosene/naphtha gap smaller? <div class="ans">The heat removed by the LGO PA is no longer available as vapour above tray 23, so the top PA duty (internal reflux on trays 4-15) falls while TIC-076 holds the top temperature.</div></li>
+<li>The HGO stripper level keeps falling with LIC-016 at 100 %. What is happening? <div class="ans">The HGO draw tray is drying: the draws above take more than is vaporised (low overflash). Raise COT or reduce the kero/LGO draws.</div></li>
+<li>Why must the desalter temperature stay between 120 and 150 °C? <div class="ans">Below, the oil is viscous and droplets settle slowly; above, the oil conductivity rises (grid current, transformer trips) and water vaporises.</div></li>
+<li>You switch to MAX KERO and the DEW alarm comes in. Why? <div class="ans">The lower top temperature moves closer to the water dew point. Reduce stripping steam a little or accept a smaller kero increase.</div></li>
+<li>E-1111 loses half its fans. Which three handles reduce the flaring? <div class="ans">More top PA duty (lower TIC-076 SP), lower COT, lower charge.</div></li>
+<li>Why is PSV-005 piped to T-1101 and not to the flare? <div class="ans">It relieves liquid crude; the column can absorb it, the flare cannot.</div></li>
+<li>What happens if P-1106 trips and nobody acts? <div class="ans">The bottoms level rises, the hot preheat loses its residue heat, UX-002 cuts the charge at 95 % and the heater trips on low pass flow.</div></li>
+<li>Why does the stabilizer reflux pump refuse to start at the beginning of the start-up? <div class="ans">Its suction drum D-1104 is empty (< 8 %): start the reboiler first.</div></li>
+</ol>
+
+<h2 id="s15">15. Training path and instructor station</h2>
+<ol><li>Steady state Bach Ho, EASY: explore every page and faceplate; take a spot sample.</li><li>Quality handles (§7.2): move one SP at a time and watch the trends.</li><li>Crude switches: Blend, then Dubai; then the flexibility cases.</li><li>Upset drills in this order: P-1106, P-1102, LIC-003, PIC-011, PIC-064, E-1111, P-1114, steam, RFCC, pass valve, fuel gas, hidden failure.</li><li>Controlled shutdown, then the full start-up from cold — first EASY, then HARD.</li></ol>
+<p><b>Instructor page</b>: freeze and speed (header), failures now or scheduled (delay and duration), clear all, decoke / clean, SIS bypass and resets, UX-007, noise on/off, sound tests, cold or steady initialisation of any case, snapshots, true-vs-measured view (frozen transmitters, stuck pass valve), journal and the exercise launcher.</p>
+
+<h2 id="s16">Appendix A. Sources, how the simulator was built, limitations</h2>
+<h3>A.1 Sources (public information only)</h3>
+<ul><li>Training module <i>Crude Distillation Unit (CDU), Unit 11</i> (281 pages): basis of design, crude assays and yields, product specifications, PFDs and DCS printouts, control narrative, ESD logic, relief-valve list, normal-operation heat and material balance, start-up and shutdown flowcharts.</li>
+<li>S.-B. Adiko, R. R. Mingasov, <i>Crude Distillation Unit (CDU)</i>, IntechOpen — desalting, demulsifiers, atmospheric distillation.</li>
+<li>Textbook chapter <i>Crude Distillation</i> (lecture notes) — TBP / ASTM cut points, overflash, desalter theory, crude material balance.</li>
+<li>General engineering knowledge: fired-heater combustion and coking, water dew point, ejector vacuum, PID practice (ISA-101 HMI, ISA-18.2 alarm management).</li></ul>
+<p>Inspired by the public training module; not affiliated with or endorsed by its authors, the refinery, the licensor or any vendor. No proprietary data, drawings or text were copied; numbers are rounded design values used for training.</p>
+<h3>A.2 How it was built</h3>
+<p>Plain HTML, CSS and JavaScript, no libraries and no build step. <code>model.js</code> holds the process (≈ 60 state variables, 1 s steps); <code>core.js</code> alarms, commands, procedures and the shared-tab runtime; <code>ui.js</code> the HMI kit, faceplates, sounds, pop-outs and PWA support. The model was verified headless in Microsoft Edge: steady state for all five cases (all products on spec, controller outputs 30–60 %), a full cold start-up, a controlled shutdown, four crude-switch exercises and every upset drill with and without operator response.</p>
+<h3>A.3 Assumed values and tags</h3>
+<ul><li>Tags not given in the source: FIC-004, AIC-063, FQIC-024, FIC-051/052/053, TIC-060, UV-085/086/089, PV-120, UX-002/022/024 functions — marked (a).</li><li>TBP curves between the design cut points, freeze/pour/smoke/cetane base values, flushing-oil curve, exchanger duties per stream, heater efficiency and coking constants, condenser capacity, valve sizes.</li><li>HGO carbon residue ≤ 0.3 wt% and LGO water ≤ 200 ppm specifications (for the downstream hydrotreater).</li><li>PIC-068 padding range (0–33 %).</li></ul>
+<h3>A.4 Limitations</h3>
+<ul><li>Lumped model: no tray-by-tray calculation, no rigorous thermodynamics; product properties come from correlations on effective cut points and section reflux.</li><li>Pumps have a single motor symbol per A/B pair (START after a trip = start the spare).</li><li>Vacuum distillation, the kerosene treater and the RFCC are outside the battery limit.</li><li>Cascades are simplified; fuel oil firing and the off-gas trip UX-005C/D are not simulated.</li></ul>
+<h3>A.5 Revision history</h3>
+<table class="t"><tr><th>Edition</th><th>Date</th><th class="l">Changes</th></tr><tr><td>1.0</td><td>2026-11-19</td><td class="l">First edition: five cases, cold start-up, shutdown, 12 upset drills, 4 crude-switch exercises.</td></tr></table>
+</div>
+</template>
+
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+UI.page({
+  graphic: false, faceplate: false,
+  side: [() => {
+    const c = UI.card('Contents');
+    const bd = c.querySelector('.bd'); bd.classList.add('toc');
+    c.style.position = 'sticky'; c.style.top = '84px';
+    return c;
+  }, 'kpi'],
+  body(view) { view.append(document.getElementById('manual').content.cloneNode(true)); }
+});
+(function () {
+  const fx = UI.fx, pg = (id) => (UI.PAGES.find(p => p[0] === id) || ['', id])[1];
+  const T = (head, rows) => '<table class="t"><tr>' + head.map(h => '<th class="l">' + h + '</th>').join('') + '</tr>' + rows.map(r => '<tr>' + r.map(c => '<td class="l">' + c + '</td>').join('') + '</tr>').join('') + '</table>';
+  const gen = {};
+  gen.ctl = () => T(['Loop', 'Function', 'Range', 'Action', 'Final element', 'Page'], Object.entries(CDU.CTL).map(([t, d]) => ['<b>' + t + '</b>', d.d, d.lo + ' – ' + d.hi + ' ' + d.u, d.hand ? 'hand' : d.act > 0 ? 'direct' : 'reverse', CDU.FCE[t] || '', pg(d.page)]));
+  gen.cases = () => T(['Case', 'Description', 'Crude', 'TBP cuts N/K · K/L · L/H · H/R (°C)', 'Kero spec'], Object.entries(CDU.GRADES).map(([k, g]) => ['<b>' + k + '</b>', g.desc, g.bh + ' % Bach Ho', g.cuts.join(' · '), g.jet ? 'Jet A-1 (freeze ≤ −47 °C)' : 'KTU feed']));
+  gen.recipes = () => {
+    const items = CDU.recipeItems('BACH HO');
+    return '<table class="t"><tr><th class="l">Setpoint</th>' + Object.keys(CDU.GRADES).map(g => '<th>' + g + '</th>').join('') + '<th class="l">Unit</th></tr>' +
+      items.map(([lab, key, , u], i) => '<tr><td class="l">' + lab + '</td>' + Object.keys(CDU.GRADES).map(g => { const v = CDU.recipeItems(g)[i][2]; return '<td>' + fx(v, Math.abs(v) < 10 ? 2 : 1) + '</td>'; }).join('') + '<td class="l">' + u + '</td></tr>').join('') + '</table>';
+  };
+  gen.normal = () => T(['Loop', 'Normal SP', 'Function'], Object.entries(CDU.NORMAL_SP).map(([t, v]) => ['<b>' + t + '</b>', v + ' ' + CDU.CTL[t].u, CDU.CTL[t].d]));
+  const SEE = [
+    'Desalters BYPASSED, all routes SLOPS, HS-003 FLUSH.',
+    'Desalter line pressure 12 kg/cm²g; T-1101 bottoms level rising ≈ 10 %/min at 400 t/h. Keep LIC-007 in MAN 0 %.',
+    'FIC-069 holds ≈ 400 t/h on P-1106; heater inlet = T-1101 bottom temperature; level steady.',
+    'Purge timer counts to 300 s on the heater page (B-1101 running, fuel off, vanes ≥ 25 %).',
+    'Pilots then burners lit; COT climbs; flue O2 controlled near 3 %. Raise the SP no faster than ≈ 50 °C/h.',
+    'In LONG path the circulating oil warms the preheat train (Preheat train indicator rises to ≈ 90–100 °C). Then back to SHORT.',
+    'COT 250–270 °C in AUTO. The flushing oil starts to vaporise; the top temperature rises.',
+    'Pumparound pumps running; tempered water and TIC-111 in AUTO; E-1112 fans on; TIC-076 AUTO ≈ 110 °C.',
+    'Crude arriving: HS-003 CRUDE, P-6001 + P-1101, HS-100 NORMAL; charge 450 t/h; LIC-007 AUTO sends residue to slops; branch ΔT controllers AUTO.',
+    'E-1111 fans on, PIC-064 holds 1.3 kg/cm²g with fuel-gas make-up; naphtha appears in D-1103; LIC-038/040 AUTO.',
+    'Desalters in service with transformers, wash water ≈ 4 %, recycle and interfaces 50 %; salt falls below 2 ppm.',
+    'COT at the recipe; bottom > 300 °C before stripping steam; residue < 360 °C content falls.',
+    'Side draws pulled by FQIC-033/020/024 (≈ 55 % of recipe at 450 t/h); stripper and dryer levels 50 %; dryer vacuum −0.9.',
+    'Stabilizer bottom heats to 188 °C; D-1104 fills; reflux and LPG pumps started when D-1104 > 8 %.',
+    'Every product on spec in the lab → route each product to PRODUCT.',
+    'Ramp FIC-069 in steps of ≈ 100 t/h; scale draws, pumparound duties, steam, LPG and wash water with the charge; all products stay on spec.'];
+  const HOW = [
+    'HS-001 BYPASS (faceplate of HS-001), routing switches on page 500, HS-003 on page 100.',
+    'Start P-6001; PIC-011 AUTO SP 12; start P-1101; FIC-069 AUTO 400 t/h.',
+    'Start P-1106; HS-100 SHORT (heater page); stop P-1101 then P-6001.',
+    'SL-1101 steam ON; start B-1101; AIC-063 MAN 40 %.',
+    'PILOT LIGHT; TIC-066 MAN OP 8 %; BURNERS LIGHT; AIC-063 AUTO 3 %; TIC-066 AUTO and ramp the SP.',
+    'HS-100 LONG; hold COT ≈ 110 °C until the train is warm; HS-100 SHORT.',
+    'Ramp TIC-066 SP to 262 °C.',
+    'Start P-1122 (TIC-111 AUTO 85), P-1102 + E-1112, P-1103, P-1104, P-1105; UIC loops MAN ≈ 20 %.',
+    'HS-003 CRUDE; P-6001 (PIC-011 AUTO 12); P-1101; HS-100 NORMAL; FIC-069 450; LIC-007 AUTO 50; TDIC-007/015 AUTO 0.',
+    'Start E-1111; PIC-064 AUTO 1.3; LIC-038 AUTO 50; LIC-040 AUTO 50; TIC-076 AUTO.',
+    'PDIC-503/506 MAN 50 % then AUTO 1.2; HS-001 IN SERVICE; TR-01/02 ON; P-1119 + FIC-004; P-1118; LIC-003/006 AUTO; demulsifier and neutralizer ON.',
+    'Ramp TIC-066 to the recipe; then FIC-051 / 052 / 053 AUTO at the scaled steam rates; UIC loops AUTO at scaled duties.',
+    'Start P-1107, P-1112, P-1113 and ejectors; LIC-011/013/016/019/022 AUTO 50; PIC-049 AUTO −0.9; FQIC-033/020/024 AUTO.',
+    'Start P-1110 when D-1103 > 20 %; TIC-060 AUTO 188; PIC-068 AUTO 7.6; LIC-042 AUTO 40; then P-1114 / LIC-047 and P-1115 / FQIC-037.',
+    'Quality page: check every lab value; routing switches to PRODUCT.',
+    'FIC-069 to 810 t/h; recipe SPs (EASY: Apply recipe SPs).'];
+  gen.startup = () => T(['#', 'Step', 'How', 'What you should see', 'Page'], CDU.PROCS.startup.steps.map((s, i) => [String(i + 1), s[0], HOW[i] || '', SEE[i] || '', pg(s[1])]));
+  const SSEE = ['Charge and draws reduced proportionally; products stay near spec.', 'COT ≤ 300 °C; vaporisation and overhead fall.', 'All routing switches at SLOPS.', 'Burners and pilots out; COT falls with the charge still flowing.', 'Stripping and ejector steam off (stop steam before the tower cools below 150 °C).', 'Desalter services stopped.', 'HP steam closed; stabilizer cools.', 'D-1103 kept ≥ 1.0 kg/cm²g with fuel gas while the overhead cools.', 'P-1101 first, then P-6001 — charge zero.', 'Pumparounds and stabilizer reflux stopped.', 'LIC-007 / 038 / 042 MAN 100 % to pump out to slops; stop P-1106 and P-1110 at ≈ 8 %.', 'All machines stopped — unit down.'];
+  gen.shutdown = () => T(['#', 'Step', 'What you should see', 'Page'], CDU.PROCS.shutdown.steps.map((s, i) => [String(i + 1), s[0], SSEE[i] || '', pg(s[1])]));
+  const DR = {
+    p1106: ['Level HH 95 % → UX-002 cuts the charge → heater trips on low pass flow.', 'START the spare P-1106 within ~2 min.'],
+    p1102: ['Top temperature runs to ≈ 180 °C, naphtha heavy, E-1111 overloaded, PIC-064 flares ≈ 60 t/h; products off-spec.', 'START the spare P-1102; then trim TIC-076.'],
+    e1111: ['Uncondensed vapour; PIC-064 flares ≈ 55 t/h for the duration of the fault.', 'Lower TIC-076 SP 3 °C (more top PA duty), lower COT 3 °C, reduce charge to ≈ 700 t/h with draws scaled; restore when the fans return.'],
+    fg: ['Burner pressure low-low → UX-005B, pilot gas low-low → UX-005E; COT collapses; T-1101 bottoms rise to UX-002.', 'Reduce charge to 500 t/h and route to slops; when the gas returns: reset UHSR-005, purge 5 min, pilots, burners, ramp COT, then rate; products back to PRODUCT when on spec.'],
+    pass: ['Pass 5 flow low, its outlet and skin temperatures high (PASSL, SKIN alarms); coking accelerates.', 'Reduce charge (≈ 690 t/h) and firing so the skin stays < 500 °C; ask the field to free the valve.'],
+    lic003: ['D-01 interface climbs to 90 % → transformer trips → salt rises.', 'LIC-003 MAN and open LV-003 (≈ 46 %).'],
+    pic011: ['Desalter pressure rises → PSV-005 relieves into T-1101 → UX-001 trips the desalters and the heater fuel.', 'PIC-011 MAN at ≈ 54 % within 1–2 min.'],
+    pic064: ['Fuel gas flows into D-1103, off gas to RFCC closes; top pressure reaches 3.5 → PSV-161 lifts to flare.', 'PIC-064 MAN at ≈ 40 %.'],
+    rfcc: ['LIC-007 swings the residue to storage (≈ 400 t/h); off gas has to go elsewhere; level high alarm.', 'Watch TIC-111 (residue to tank < 95 °C); reduce charge if storage cooling is short.'],
+    steam: ['Kero/LGO flash and residue < 360 °C off-spec while the steam is lost.', 'Route products to slops; restore when steam returns and the lab is on spec.'],
+    p1114: ['No reflux: T-1107 top hot, C5+ in LPG high, D-1104 fills → UX-024 cuts the reboiler.', 'START the spare P-1114.'],
+    hidden: ['One of: pass valve sticks, LIC-038 or TIC-076 transmitter frozen, LIC-003 fails.', 'Compare indications (Instructor view shows the truth), use trends and balances.']
+  };
+  gen.drills = () => T(['Drill', 'Failure / delay', 'With no response', 'Correct response'], CDU.EXERCISES.filter(e => e.fail || e.hidden).map(e => ['<b>' + e.title + '</b>', (e.fail ? CDU.FAILS[e.fail] : 'hidden') + ' after ' + Math.round((e.delay || 120) / 60) + ' min' + (e.duration ? ', lasts ' + Math.round(e.duration / 60) + ' min' : ''), (DR[e.id] || [''])[0], (DR[e.id] || ['', ''])[1]]))
+    + '<h3>Crude-switch and flexibility exercises</h3>' + T(['Exercise', 'Brief'], CDU.EXERCISES.filter(e => e.target).map(e => ['<b>' + e.title + '</b>', e.brief]));
+  gen.alarms = () => T(['Pri', 'Tag', 'Alarm', 'Page'], CDU.ALM.slice().sort((a, b) => a[2] - b[2]).map(a => ['P' + a[2], a[1], a[3], pg(a[4])]));
+  gen.sis = () => T(['Logic', 'Function'], Object.entries(CDU.SIS_DESC).map(([k, v]) => ['<b>' + k + '</b>', v]));
+  gen.psv = () => T(['Tag', 'Service', 'Set', 'Simulated'], Object.entries(CDU.PSV).map(([t, v]) => ['<b>' + t + '</b>', v.d, v.set + ' kg/cm²g (reseat ' + v.reseat + ')', 'live — ' + (v.to === 'flare' ? 'to flare' : 'to T-1101') + ', ' + v.cap + ' t/h'])
+    .concat(Object.entries(CDU.PSV_STATIC).map(([t, v]) => [t, v[0], v[2], 'static'])));
+  gen.specs = () => T(['Product', 'Property', 'Specification', 'Main handle'], Object.entries(CDU.PROPS).filter(([, P]) => P.spec || P.jet).map(([k, P]) => [CDU.PRODUCTS[P.prod], P.label + (P.unit ? ' (' + P.unit + ')' : ''), P.spec ? (P.spec[0] <= -900 ? '≤ ' + P.spec[1] : P.spec[1] >= 900 ? '≥ ' + P.spec[0] : P.spec[0] + ' – ' + P.spec[1]) : 'Jet A-1 ≤ −47 (BLEND)',
+    { C5: 'FQIC-037, reflux', C4N: 'TIC-060', GNK: 'pumparound duties', KFL: 'UIC-033, TIC-076', FRZ: 'FQIC-033, blend', SMK: 'kero end point', DEN: 'kero cut', GKL: 'UIC-032', LFL: 'FIC-052', POUR: 'FQIC-020', CET: 'crude', H2O: 'PIC-049 vacuum', OLH: 'COT, UIC-031', HFL: 'FIC-053', CCR: 'overflash (COT)', R360: 'FIC-051, COT, FQIC-024' }[k] || '']));
+  document.querySelectorAll('.man [data-gen]').forEach(el => { const f = gen[el.dataset.gen]; if (f) el.innerHTML = f(); });
+  const toc = document.querySelector('.toc');
+  const ptoc = UI.h('div', { class: 'print-toc' }, '<h2>Contents</h2>');
+  document.querySelectorAll('.man h2').forEach(h2 => { toc.append(UI.h('a', { href: '#' + h2.id }, h2.textContent)); ptoc.append(UI.h('a', { href: '#' + h2.id }, h2.textContent)); });
+  document.querySelector('.man .warn').after(ptoc);
+})();
+</script>
+</body>
+</html>

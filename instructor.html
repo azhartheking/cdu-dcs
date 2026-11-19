@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — Instructor</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="instructor">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx, h = UI.h;
+UI.page({
+  graphic: false, faceplate: false, side: ['kpi', 'trend:prod'],
+  body(view) {
+    const grid = h('div', { class: 'panels' }); view.append(grid);
+    // ---- failures: now or scheduled
+    const fc = UI.card('Equipment, utility & instrument failures');
+    const fg = h('div', { class: 'fail-grid' });
+    for (const k in CDU.FAILS) {
+      const b = h('button', { on: { click: () => CDU.cmd({ type: 'fail', name: k, on: !CDU.rt.S.fail[k], src: 'INSTRUCTOR' }) } });
+      UI.bind(b, (S) => { b.textContent = S.fail[k] ? 'ACTIVE — clear' : 'Activate'; b.classList.toggle('warn', S.fail[k]); });
+      fg.append(h('span', {}, CDU.FAILS[k]), b);
+    }
+    const sch = h('div', { class: 'tabs', style: 'margin-top:10px;align-items:center' });
+    const fs = h('select', { style: 'max-width:100%' }); for (const k in CDU.FAILS) fs.append(h('option', { value: k }, CDU.FAILS[k]));
+    const dl = h('input', { type: 'number', value: 5, min: 0, step: 1, title: 'delay, sim minutes' }), du = h('input', { type: 'number', value: 0, min: 0, step: 1, title: 'duration, sim minutes (0 = until cleared)' });
+    sch.append(fs, h('span', { class: 'hint' }, 'in'), dl, h('span', { class: 'hint' }, 'min, lasting'), du, h('span', { class: 'hint' }, 'min (0 = until cleared)'),
+      h('button', { on: { click: () => CDU.cmd({ type: 'schedFail', name: fs.value, delay: +dl.value * 60, dur: +du.value * 60, src: 'INSTRUCTOR' }) } }, 'Schedule'));
+    const ft = h('div', { class: 'tabs', style: 'margin-top:8px' });
+    ft.append(h('button', { on: { click: () => CDU.cmd({ type: 'clearFails', src: 'INSTRUCTOR' }) } }, 'Clear all failures + schedule'),
+      h('button', { on: { click: () => CDU.cmd({ type: 'resetFoul', src: 'INSTRUCTOR' }) } }, 'Decoke heater / clean exchangers'));
+    fc.querySelector('.bd').append(fg, sch, ft);
+    grid.append(fc);
+
+    // ---- SIS + noise
+    const pc = UI.card('Safety systems & process noise');
+    const pb = pc.querySelector('.bd');
+    const sb = h('button', { on: { click: () => CDU.cmd({ type: 'sisBypass', on: !CDU.rt.S.sis.bypass, src: 'INSTRUCTOR' }) } });
+    UI.bind(sb, (S) => { sb.textContent = S.sis.bypass ? 'SIS BYPASSED — restore' : 'Bypass SIS'; sb.classList.toggle('warn', S.sis.bypass); });
+    const nb = h('button', { title: 'Small random drifts (crude assay, ambient, fuel gas) and transmitter noise, like a real plant', on: { click: () => CDU.cmd({ type: 'noise', on: CDU.rt.S.noiseOn === false, src: 'INSTRUCTOR' }) } });
+    UI.bind(nb, (S) => { nb.textContent = S.noiseOn === false ? 'Process noise OFF — turn on' : 'Process noise ON — turn off'; nb.classList.toggle('warn', S.noiseOn === false); });
+    const t = h('div', { class: 'tabs' });
+    t.append(sb, nb,
+      h('button', { on: { click: () => CDU.cmd({ type: 'sisReset', k: 'htr', src: 'INSTRUCTOR' }) } }, 'Reset heater trip'),
+      h('button', { on: { click: () => CDU.cmd({ type: 'sisReset', k: 'ux001', src: 'INSTRUCTOR' }) } }, 'Reset UX-001'),
+      h('button', { on: { click: () => CDU.cmd({ type: 'sisReset', k: 'reb', src: 'INSTRUCTOR' }) } }, 'Reset UX-024'),
+      h('button', { class: 'warn', on: { click: () => { const S = CDU.rt.S; if (confirm(S.sis.esd ? 'Reset UX-007?' : 'Initiate UX-007 CDU emergency shutdown?')) CDU.cmd({ type: 'esd', on: !S.sis.esd, src: 'INSTRUCTOR' }); } } }, 'UX-007 ESD / reset'));
+    pb.append(t);
+    pb.append(UI.kv([['SIS status', S => S.sis.bypass ? 'BYPASSED' : 'NORMAL', '', 0, S => S.sis.bypass], ['Heater', S => S.sis.htrTrip ? 'TRIPPED' : S.eq.BURN ? 'firing' : 'out', '', 0, S => S.sis.htrTrip],
+      ['UX-001 / UX-024', S => (S.sis.cut.ux001 ? 'TRIP' : 'ok') + ' / ' + (S.sis.cut.reb ? 'TRIP' : 'ok'), '', 0, S => S.sis.cut.ux001 || S.sis.cut.reb], ['Last trip demand', S => S.sis.lastTrip || '—', '', 0]]));
+    const sl = h('div', { class: 'hint', style: 'margin-top:6px' }); sl.innerHTML = Object.entries(CDU.SIS_DESC).map(([k, v]) => '<b>' + k + '</b> ' + v).join('<br>'); pb.append(sl);
+    grid.append(pc);
+
+    // ---- init / snapshot
+    const ic = UI.card('Initialise & snapshots');
+    const ib = ic.querySelector('.bd');
+    const sel = h('select'); for (const g in CDU.GRADES) sel.append(h('option', { value: g }, g));
+    const r0 = h('div', { class: 'tabs', style: 'margin-bottom:6px' });
+    r0.append(h('button', { on: { click: () => UI.sessionMenu(true) } }, '☰ Session menu — normal / drills / start-up / shutdown'),
+      h('button', { on: { click: () => { if (confirm('Initialise the unit COLD (empty, all equipment stopped) for a start-up on ' + sel.value + '?')) CDU.cmd({ type: 'session', mode: 'startup', grade: sel.value }); } } }, 'Initialise cold (start-up)'));
+    const r1 = h('div', { class: 'tabs' }); r1.append(sel, h('button', { class: 'warn', on: { click: () => { if (confirm('Re-initialise at steady state on ' + sel.value + '? Current state is lost.')) CDU.cmd({ type: 'reinit', grade: sel.value }); } } }, 'Re-initialise at steady state'));
+    const r2 = h('div', { class: 'tabs', style: 'margin-top:6px' });
+    r2.append(h('button', { on: { click: () => CDU.cmd({ type: 'snapSave' }) } }, 'Save snapshot'), h('button', { on: { click: () => { if (confirm('Restore saved snapshot?')) CDU.cmd({ type: 'snapRestore' }); } } }, 'Restore snapshot'));
+    ib.append(r0, r1, h('div', { class: 'hint' }, 'Initialisation settles the model silently for ~4 h sim time (takes about a second).'), r2);
+    grid.append(ic);
+
+    // ---- sounds
+    const ac = UI.card('Alarm & plant sounds');
+    const ar = h('div', { class: 'tabs' });
+    [[1, 'Test P1 (warble)'], [2, 'Test P2 (double beep)'], [3, 'Test P3 (chime)']].forEach(([p, l]) => ar.append(h('button', { on: { click: () => UI.audio.test(p) } }, l)));
+    const tg = h('button', { on: { click: () => UI.audio.toggle() } }); UI.bind(tg, () => { tg.textContent = UI.audio.on ? 'Sound is ON — turn off' : 'Sound is OFF — turn on'; tg.classList.toggle('warn', !UI.audio.on); });
+    ar.append(h('button', { on: { click: () => UI.audio.testHiss() } }, 'Test PSV relief (kshhh)'), h('button', { on: { click: () => UI.audio.testRoar() } }, 'Test flare roar'), tg);
+    ac.querySelector('.bd').append(ar, h('div', { class: 'hint', style: 'margin-top:6px' }, 'P1 repeats every 1.4 s and P2 every 4 s until acknowledged or silenced; P3 chimes once. Only the last-clicked window plays sound. Browsers allow sound only after a click on the page.'));
+    grid.append(ac);
+
+    // ---- instructor truth
+    const tc = UI.card('Instructor view — true vs measured');
+    tc.querySelector('.bd').append(UI.kv([
+      ['TIC-076 true / transmitter', S => fx(S.p.Ttop, 1) + ' / ' + fx(S.ctl['TIC-076'].pv, 1), '°C', 1, S => Math.abs(S.p.Ttop - S.ctl['TIC-076'].pv) > 1.5],
+      ['LIC-038 true / transmitter', S => fx(S.p.L1103, 1) + ' / ' + fx(S.ctl['LIC-038'].pv, 1), '%', 1, S => Math.abs(S.p.L1103 - S.ctl['LIC-038'].pv) > 3],
+      ['Pass 5 flow / average', S => fx(S.p.pass[4], 1) + ' / ' + fx(S.p.F / 8, 1), 't/h', 1, S => S.p.pass[4] < 0.9 * S.p.F / 8],
+      ['Max tube skin / coke', S => fx(S.p.skinMax, 0) + ' / ' + fx(S.p.coke || 0, 3), '°C', 0, S => S.p.skinMax > 500],
+      ['Active exercise', S => S.exercise ? S.exercise.title : '—', '', 0],
+      ['Scheduled events', S => S.sched.filter(x => !x.done).map(x => (x.on === false ? 'clear ' : '') + CDU.FAILS[x.fail] + ' @ ' + CDU.fmtT(x.t)).join(', ') || '—', '', 0]
+    ]));
+    grid.append(tc);
+
+    // ---- journal
+    const jc = UI.card('Journal (latest)', ' <a href="alarms.html">full journal →</a>');
+    const jt = h('table', { class: 't' }); jc.querySelector('.bd').append(jt);
+    UI.bind(jt, (S) => { jt.innerHTML = '<tr><th>Time</th><th class="l">Source</th><th class="l">Event</th></tr>' + S.journal.slice(0, 14).map(x => `<tr><td>${CDU.fmtT(x.t)}</td><td class="l">${x.src}</td><td class="l" style="white-space:normal">${x.msg}</td></tr>`).join(''); });
+    grid.append(jc);
+
+    // ---- exercises
+    const ec = UI.card('Training exercises');
+    const eb = ec.querySelector('.bd');
+    for (const ex of CDU.EXERCISES) {
+      const d = h('div', { class: 'ex' });
+      d.append(h('b', {}, (ex.fail || ex.hidden ? 'Upset: ' : '') + ex.title), h('p', {}, ex.brief), h('button', { on: { click: () => { if (confirm('Start exercise "' + ex.title + '"? The unit is re-initialised.')) CDU.cmd({ type: 'exercise', id: ex.id }); } } }, 'Start exercise'));
+      eb.append(d);
+    }
+    view.append(ec);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDU DCS — 200 Crude Heater H-1101</title>
+<link rel="stylesheet" href="assets/dcs.css?v=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#9b9ea1"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body data-page="heater">
+<div id="hdr"></div>
+<div id="main"><section id="view"></section><aside id="side"></aside></div>
+<div id="banner"></div>
+<script src="assets/model.js?v=1"></script>
+<script src="assets/core.js?v=1"></script>
+<script src="assets/ui.js?v=1"></script>
+<script>
+const fx = UI.fx, NS = 'http://www.w3.org/2000/svg';
+UI.page({
+  defaultTag: 'TIC-066',
+  side: ['kpi', 'trend:temps', 'trend:heater'],
+  draw(d) {
+    d.label(20, 26, 'AREA 200 — CRUDE CHARGE HEATER H-1101 (2 cells · 8 passes · 16 burners)', 'lbl big');
+    // ---- pass table (left)
+    d.label(20, 58, 'PASS', 'lbl s'); d.label(60, 58, 'FI-071…078 flow', 'lbl s'); d.label(162, 58, 'outlet TI', 'lbl s'); d.label(242, 58, 'tube skin TI', 'lbl s');
+    for (let i = 0; i < 8; i++) {
+      const y = 66 + i * 40;
+      d.label(22, y + 20, String(i + 1), 'lbl');
+      d.ind(40, y, 'FI-07' + (i + 1), S => S.p.pass[i], 't/h', 1, 98, 'FI-PASS');
+      d.ind(142, y, 'TI pass ' + (i + 1), S => S.p.passT[i], '°C', 1, 88);
+      d.ind(234, y, 'TI skin ' + (i + 1), S => S.p.skin[i], '°C', 0, 88, 'TI-SKIN');
+    }
+    d.ind(40, 392, 'Pass flow total', S => S.p.F, 't/h', 0, 130);
+    d.tag(176, 386, 'FIC-069');
+    d.sel(40, 460, 'HS-100 heater suction / circulation', ['NORMAL', 'SHORT', 'LONG'], S => S.circ, v => CDU.cmd({ type: 'circ', v }));
+    d.dyn(40, 498, S => S.circ === 'NORMAL' ? 'suction from booster P-1101 (desalted crude via hot train)' : S.circ === 'SHORT' ? 'T-1101 bottoms → P-1106 → H-1101 → T-1101' : 'T-1101 bottoms → preheat front end → H-1101 → T-1101', 'lbl s');
+    d.ind(40, 508, 'Heater inlet', S => S.p.Tin, '°C', 1, 110);
+    d.ind(160, 508, 'Preheat train', S => S.p.Ttrain, '°C', 1, 110);
+    d.link(14, 572, 'FROM HOT TRAIN', 'preheat.html#FIC-069', 'l');
+    d.pipe([[150, 572], [372, 572], [372, 128], [394, 128]], 'crude');
+    // ---- stack and convection section
+    d.rect(560, 34, 44, 50, 'eq', 4); d.label(612, 52, 'stack', 'lbl s');
+    d.rect(420, 84, 324, 66, 'eq', 4); d.label(582, 100, 'CONVECTION — 8 passes + LP-steam superheater (3 rows)', 'lbl s', 'middle');
+    const conv = document.createElementNS(NS, 'path'); conv.setAttribute('class', 'coil'); conv.setAttribute('d', 'M398,128 ' + Array.from({ length: 10 }, (_, i) => `L${436 + i * 30},118 L${451 + i * 30},138`).join(' ') + ' L744,128'); d.layer.eq.appendChild(conv);
+    d.pipe([[394, 128], [420, 128]], 'crude', { noArrow: true });
+    // ---- two radiant cells
+    for (const [x, cell] of [[420, 'CELL 1 · passes 1-4'], [588, 'CELL 2 · passes 5-8']]) {
+      d.rect(x, 156, 156, 300, 'firebox', 3); d.label(x + 78, 172, cell, 'lbl s', 'middle');
+      const coil = document.createElementNS(NS, 'path'); coil.setAttribute('class', 'coil');
+      coil.setAttribute('d', `M${x + 10},190 L${x + 10},440 M${x + 22},190 L${x + 22},440 M${x + 134},190 L${x + 134},440 M${x + 146},190 L${x + 146},440`); d.layer.eq.appendChild(coil);
+      const fl = document.createElementNS(NS, 'g'); d.layer.fg.appendChild(fl);
+      for (let b = 0; b < 4; b++) {
+        const f = document.createElementNS(NS, 'path'); f.setAttribute('class', 'fire flame'); fl.appendChild(f);
+        const cx = x + 44 + b * 22;
+        UI.bind(f, (S) => { const on = S.eq.BURN, h = on ? 30 + 160 * Math.min(1.2, S.p.Qfired / 95) : (S.eq.PILOT ? 10 : 0); f.setAttribute('d', `M${cx - 7},452 Q${cx - 9},${452 - h * 0.5} ${cx},${452 - h} Q${cx + 9},${452 - h * 0.5} ${cx + 7},452 Z`); f.style.fill = on && S.p.O2 < 1.5 ? '#c04000' : ''; f.style.opacity = h > 0 ? 0.85 : 0; });
+      }
+    }
+    d.ind(450, 196, 'Bridgewall', S => S.p.Tbw, '°C', 0, 96);
+    d.ind(618, 196, 'Abs. duty', S => S.p.Qabs, 'MW', 1, 96);
+    d.ind(450, 236, 'Fired duty', S => S.p.Qfired, 'MW', 1, 96);
+    d.ind(618, 236, 'Efficiency', S => S.p.eta * 100, '%', 1, 96);
+    d.ind(450, 276, 'Coke index', S => S.p.coke || 0, '', 3, 96);
+    d.ind(618, 276, 'Max skin', S => S.p.skinMax, '°C', 0, 96, 'TI-SKIN');
+    // ---- outlet header → T-1101
+    d.pipe([[744, 128], [790, 128], [790, 40], [1120, 40]], 'crude');
+    d.link(1080, 62, 'TO T-1101 FLASH ZONE', 'fract.html#TIC-076');
+    d.tag(800, 56, 'TIC-066');
+    d.ind(930, 56, 'Flash zone', S => S.p.Tfz, '°C', 1, 96);
+    d.ind(930, 96, 'Vaporised', S => S.p.yv * 100, '% wt', 1, 96);
+    // ---- superheater: LP steam → stripping steam
+    d.link(1090, 130, 'LP STEAM 3.5', 'utilities.html#PI-LPS', 'l');
+    d.pipe([[1090, 130], [760, 130], [760, 116], [744, 116]], 'steam');
+    d.motor(870, 130, 'SHSTM', 'sw', ''); d.label(870, 156, 'SL-1101 coil steam', 'lbl s', 'middle');
+    d.pipe([[420, 104], [404, 104], [404, 66], [500, 66]], 'steam');
+    d.label(408, 60, 'superheated steam → stripping', 'lbl s');
+    d.psv(1020, 118, 'PSV-085', 'r');
+    d.ind(820, 168, 'TI superheated steam', S => S.p.Tsh, '°C', 0, 130, 'TI-SH');
+    d.link(1078, 196, 'STRIPPING STEAM', 'fract.html#FIC-051');
+    // ---- fuel gas, pilots, burners
+    d.link(1090, 560, 'FUEL GAS D-1114', 'utilities.html#PI-FG', 'l');
+    d.pipe([[1090, 560], [900, 560]], 'fg', { noArrow: true });
+    d.valve(870, 560, 'TIC-066', false, 'PV-120');
+    d.pipe([[860, 560], [800, 560], [800, 500], [498, 500], [498, 458]], 'fg');
+    d.pipe([[666, 500], [666, 458]], 'fg');
+    d.motor(760, 500, 'BURN', 'flame', ''); d.label(760, 526, 'XV-006/010 main burners', 'lbl s', 'middle');
+    d.pipe([[1000, 560], [1000, 600], [560, 600], [560, 470]], 'fg', { noArrow: true });
+    d.motor(640, 600, 'PILOT', 'flame', ''); d.label(640, 626, 'XV-007/011 pilots', 'lbl s', 'middle');
+    d.ind(900, 586, 'Fuel gas', S => S.p.FG, 't/h', 2, 96);
+    d.ind(1000, 610, 'FG header', S => S.p.fgH, 'kg/cm²g', 2, 110, 'PI-FG');
+    d.ind(780, 610, 'Burner P PI-123', S => S.p.Pburn, 'kg/cm²g', 2, 116, 'PI-123');
+    d.ind(420, 610, 'Pilot gas', S => S.p.pilotP, 'kg/cm²g', 2, 110);
+    // ---- FD fan and O2
+    d.motor(940, 460, 'B1101', 'fan', 'B-1101 A/B');
+    d.pipe([[926, 460], [760, 460]], 'gas');
+    d.label(840, 452, 'combustion air', 'lbl s', 'middle');
+    d.tag(990, 380, 'AIC-063', 112);
+    d.ind(860, 300, 'Flue O2', S => S.p.O2, '%', 2, 96, 'AIC-063');
+    d.ind(960, 300, 'Flue CO', S => S.p.CO, 'ppm', 0, 96);
+    d.ind(860, 340, 'Stack T', S => S.p.Tstack, '°C', 0, 96);
+    d.ind(960, 340, 'Air', S => S.p.air, 't/h', 0, 96);
+    // ---- SIS status
+    d.ind(860, 228, 'Heater SIS (UX-005)', S => S.sis.htrTrip ? 'TRIPPED — reset' : (S.eq.BURN ? 'FIRING' : S.eq.PILOT ? 'PILOTS ONLY' : 'OUT'), '', 0, 150, 'H-1101');
+    d.ind(1020, 228, 'Purge timer', S => S.eq.BURN || S.eq.PILOT ? 'n/a (lit)' : fx(S.sis.purge || 0, 0) + ' / 300 s', '', 0, 150, 'H-1101');
+  }
+});
+</script>
+</body>
+</html>
